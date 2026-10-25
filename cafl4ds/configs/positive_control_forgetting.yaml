@@ -1,0 +1,131 @@
+# Phase-0 positive control (P0.3) — the FORGETTING-instrument CALIBRATION gate.
+#
+# Split-task forgetting over MAE: STL-10 classes are partitioned into task A (era A) and task B
+# (era B). Two arms train phase A identically, then differ only by a phase-B REPLAY toggle:
+#   * PC (forgets)  = phase B trains on task B ONLY -> task-A probe craters (BWT << 0, FM high).
+#   * healthy (holds) = phase B replays A (trains on A u B) -> task-A holds (BWT ~ 0).
+# The gate is the CONTRAST between the two arms' forgetting; see docs/experiments/phase0/P0.3.0.md.
+#
+# P0.3.0 finding: toy MAE (CPU, tiny ViT, img32) under a kNN/linear probe barely learns task A,
+# so there is nothing to forget. The fair regime ESCALATES the MAE on the Gaudi HPU (bigger ViT,
+# larger img, long horizon) until task A is genuinely learned and then demonstrably craters:
+#
+#   ./scripts/run_gaudi_dev.sh -m /mnt/stl10 gaudi-env-cafl4ds:latest 0 \
+#       python scripts/positive_control_forgetting.py device=hpu \
+#       encoder.embed_dim=256 encoder.depth=8 encoder.num_heads=8 img_size=64 epochs_a=300 epochs_b=300
+defaults:
+  - encoder: tiny # scale embed_dim / depth / num_heads on the HPU (see header)
+  - ssl: mae # the forgetting-mode architecture (collapse-resistant; respecializes -> forgets)
+  - data: stl10
+  - data_b: null # optional 2nd source for a CROSS-DATASET split (P0.3.6): task A <- data, task B <- data_b
+  - optim: adamw
+  - _self_
+
+img_size: 32
+batch_size: 128
+seed: 0
+device: cpu # override device=hpu for the escalated fair-regime runs
+
+# The forgetting VEHICLE: 'ssl' trains MAE reconstruction (the faithful system objective);
+# 'supervised' trains per-task cross-entropy (a guaranteed respecialisation pressure used to
+# calibrate BWT/FM when SSL is too forgetting-resistant to fire — P0.3.4). Both are read through
+# the identical frozen-backbone probe + drift instruments; recon readouts are NaN under supervised.
+training_mode: ssl
+# Light crop+flip augmentation during SUPERVISED training only (regularizes a from-scratch ViT that
+# otherwise memorizes the few-thousand-image task -> the probe degrades). Ignored in ssl mode.
+supervised_augment: true
+# skip_phase_a: when the encoder is ALREADY a well-learned phase-A representation (a pretrained
+# backbone, P0.3.4), keep its weights and train only phase B — the pretrained model IS phase A.
+# Requires an encoder that loads pretrained weights (encoder=vit_b16_pretrained). Default false
+# (P0.3.4 trains a from-scratch TinyViT on task A first).
+skip_phase_a: false
+# pretrained_encoder: keep the instantiated encoder's weights as the phase-A well (no from-scratch
+# re-init) but STILL train phase A. For the P0.3.6 label-free MAE fire (encoder=vit_b16_mae): the MAE
+# checkpoint is encoder-only, so a short phase A warms the fresh decoder + pins R00 on the pretrained
+# rep before phase B. `skip_phase_a` implies this; set it alone (skip_phase_a=false) to keep phase A.
+pretrained_encoder: false
+# decoder_warmup_epochs: D1 redo (audit P0.3). Number of LEADING phase-A epochs during which the encoder
+# is frozen so ONLY the fresh MAE decoder warms; the remaining (epochs_a - decoder_warmup_epochs) are
+# joint, so the encoder consolidates into the trained system BEFORE R00 is measured. This preserves the
+# deep pretrained well WITHOUT deferring the encoder-warming transient into phase B (where the original
+# full-freeze D1 mis-counted it as forgetting). 0 = plain joint-warm (P0.3.6); >= epochs_a = full freeze
+# (the original, warming-confounded D1). SSL/MAE vehicle only; requires a pretrained well.
+decoder_warmup_epochs: 0
+# freeze_encoder_phase_a: the full-freeze endpoint of decoder_warmup_epochs (freeze the encoder through
+# ALL of phase A → R00 ≈ the pretrained transfer probe, ~0.89, but the warm-up transient lands in phase B
+# on BOTH arms → the healthy control craters too, which is why this original D1 broke the two-sided gate).
+# Kept as an alias (true ⇒ decoder_warmup_epochs = epochs_a). Default false. Requires pretrained_encoder=true.
+freeze_encoder_phase_a: false
+# healthy_replay_mode: what the HEALTHY arm trains on in phase B (the PC arm is always B-only and forgets):
+#   * "a_only" — phase B = task A ONLY (the no-shift oracle; P0.6.0 primary). Task A is retained by
+#                construction, so the sole PC-vs-healthy variable is the phase-B distribution (A vs B) and
+#                both arms do a matched step count — no arbitrary rehearsal ratio, and the healthy arm never
+#                touches a far phase-B domain that could destabilise it. Does NOT test rehearsal-prevention.
+#   * "mixed"  — phase B = replay_a_mult×A ∪ B (rehearsal: learn B while replaying A → matched task-B
+#                exposure, the crater is the task-A loss replay prevents). DEFAULT, reproduces the P0.3 MAE
+#                forgetting runs (1:1 A∪B) bit-for-bit.
+healthy_replay_mode: mixed
+# replay_a_mult: rehearsal DOSE for healthy_replay_mode=mixed — copies of task A interleaved per copy of B
+# (1 = the P0.3 1:1 A∪B; 2,3,… oversample A to hold task A against a far phase-B shift → the P0.6.0 FYI
+# rehearsal-dose ablation). Ignored when healthy_replay_mode=a_only.
+replay_a_mult: 1
+# log_task_a_trajectory: record the task-A probe after EACH phase-A and phase-B epoch (task_a_traj_a /
+# task_a_traj_b on each arm record) to trace warming vs forgetting. RNG-neutral (eval-mode + sklearn probe),
+# so it does not perturb training numerics. Off by default (bulky; drop from promoted artifacts).
+log_task_a_trajectory: false
+current_stream_drift: false # P0.6.1/C3: also pin a past-data-free drift ref to a phase-B (current-stream) batch
+# recovery_steps: P0.3.5 recoverability guard. After phase B, re-learn task A for this many mini-batch
+# updates and log how fast the task-A probe returns (geometric checkpoints). Fast recovery ⇒ apparent
+# (recoverable) forgetting; slow ⇒ genuine catastrophic loss. 0 disables (the default; P0.3.4 path).
+recovery_steps: 0
+# recovery_lr: fixed LR for the recovery re-learn (null → use the phase-B optim.lr). Set a fixed value
+# to compare recovery *rate* across craters of different depth without the optimiser step size confound.
+recovery_lr: null
+# savings_steps: P0.3.7 savings-paradigm guard (label-free MAE fire, SSL mode only). After the two arms,
+# relearn task A via MAE from three encoder inits — scratch (naive upper bound = truly forgotten),
+# PC-post-forget, and healthy-post-B (floor) — each with a FRESH decoder, and compare how fast the
+# task-A probe returns. Relearn ≈ scratch ⇒ genuine loss; relearn ≈ healthy ⇒ apparent (recoverable)
+# interference. 0 disables (default; leaves the P0.3.4/P0.3.6 path untouched).
+savings_steps: 0
+# savings_lr: LR for the savings relearn (null → the phase-B optim.lr, the same optimiser that dug it).
+savings_lr: null
+
+# Probe used for the per-task accuracy matrix (labels used HERE ONLY). Linear suits MAE features
+# (more linearly separable than kNN-separable); knn is available as a cross-check.
+probe: linear
+knn_k: 20
+
+# The split: two disjoint STL-10 class groups. |task|-way probe accuracy has real headroom
+# (random-init baseline ~1/|task|), unlike a saturating 2-class probe.
+task_a_classes: [0, 1, 2, 3, 4]
+task_b_classes: [5, 6, 7, 8, 9]
+
+# Per-phase training horizon (passes over that phase's data). Escalate on the HPU.
+epochs_a: 200
+epochs_b: 200
+
+# Held-out probe sizing (per class).
+support_per_class: 60
+query_per_class: 60
+
+# MAE-native forgetting readout: mask draws to average the held-out recon-loss probe over
+# (reads forgetting through MAE's own objective; the transfer probe has little headroom at toy scale).
+recon_masks: 8
+
+data_root: /mnt/stl10
+max_per_class: null # use the full STL-10 train split (~500/class)
+
+# The numeric pass criterion (P0.3.0-calibrated). The HARD gate rests on the transfer-probe
+# forgetting metrics — the reliable signal on a distinct-task split. Backbone drift and the
+# MAE-native recon gap are REPORTED but not gated (P0.3.0: drift separates only weakly and
+# near-threshold, and cosine_drift inverts; the recon gap corroborates via relative retention).
+gate:
+  learn_min: 0.05 # PC task-A must rise >= this above random init (something to forget)
+  bwt_fire: 0.05 # PC BackwardTransfer <= -this (task A craters)
+  fm_fire: 0.05 # PC ForgettingMeasure >= this
+  bwt_quiet: 0.03 # healthy |BackwardTransfer| <= this (task A holds)
+  min_forget_ratio: 2.0 # PC ForgettingMeasure >= this x healthy's (the replay-toggle contrast)
+  recon_gap_min: 0.03 # REPORTED: PC held-out task-A recon retained >= this worse than replay
+  rankme_proj_hold_frac: 0.5 # P0.6.0/A1 (JE only): PC rankme_proj must stay >= this x its post-A value (not collapse)
+
+run_log: run_log.jsonl

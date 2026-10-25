@@ -1,0 +1,6 @@
+predecessor: outputs/single-image-j-rescue/20261024-after-n78
+arm: uniform_bounded_retention
+global_J_fraction: 0.01
+window_J_fraction: 0.01
+retention_window_updates: 32
+poll_seconds: 20

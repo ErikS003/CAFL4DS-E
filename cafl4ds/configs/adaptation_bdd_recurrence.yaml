@@ -1,0 +1,25 @@
+# P1.3 recurrence: no architecture, optimizer, or policy search.
+defaults:
+  - adaptation_bdd_clean_warm_mae_replay
+  - _self_
+
+seeds: [5003, 5009, 5011, 5021, 5023]
+seed_split: recurrence_20261001
+run_name: bdd_recurrence
+device: cpu
+train_scope: full
+few_shot_counts: []
+recurrence:
+  domains: ["daytime·clear", "night·clear"]
+  scene_classes: [city street, highway, residential]
+  max_per_class_per_visit: 4096
+  min_per_class_per_visit: 128
+  pool_seed: 51001
+  support_per_domain_class: 50
+  query_per_domain_class: 100
+  min_query_per_domain_class: 30
+  draw_seeds: [51011, 51017, 51023]
+  shots_per_class: 25
+  fine_tune_steps: 100
+  recovery_tolerance: 0.005
+  num_threads: 4

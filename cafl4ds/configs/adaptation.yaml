@@ -1,0 +1,43 @@
+# P1.2: does online adaptation beat an init-matched frozen backbone?
+defaults:
+  - encoder: tiny
+  - backbone: je
+  - data: attr_synthetic_adaptation
+  - stream: regime
+  - filter: accept_all
+  - optim: adamw
+  - init: from_scratch
+  - _self_
+
+img_size: 16
+batch_size: 32
+seed: 0
+seeds: [0, 1, 2]
+device: cpu
+eval_every: 2
+update_every: 1
+train_scope: full
+adapter_bottleneck: 16
+teacher_retention_weight: 1.0
+
+# The global support/query sets are shared by the normal health monitor. The additional balanced
+# per-cell query caps supply current-condition and probe-on-past evaluation without entering training.
+stream:
+  support_per_canary: 8
+  query_per_canary: 8
+  era_query_per_cell: 4
+
+max_train_per_regime: null
+bdd_root: /mnt/bdd100k
+max_images: null
+well: null
+pretrain_dir: outputs/pretrain
+
+condition_probe: linear
+condition_knn_k: 5
+few_shot_counts: [1, 2, 5, 8]
+run_name: je_adapt_vs_frozen
+
+hydra:
+  run:
+    dir: outputs/adaptation/${now:%Y%m%d-%H%M%S}

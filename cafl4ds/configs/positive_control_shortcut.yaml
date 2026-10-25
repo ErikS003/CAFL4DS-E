@@ -1,0 +1,96 @@
+# Phase-0 positive control (P0.5) — the MAE shortcut / stable-loss representation-degradation
+# gate, and the P0.2 collapse suite ON TRIAL on an MAE backbone.
+#
+# One session, two arms, identical everything except ONE shortcut lever:
+#   * healthy   = MAE at the standard operating point (mask 0.75, lightweight decoder) -> reaches
+#                 a GOOD frozen-probe accuracy (real headroom above chance).
+#   * shortcut  = MAE with the lever relaxed so the encoder takes a low-level shortcut -> the loss
+#                 stays low/healthy-looking while the frozen probe CRATERS.
+# Both from-scratch (the clean producer of a full-rank-but-useless rep; degrading a competent MAE
+# is capacity-confounded -> P0.5.5). The seed is reset before each arm so the two encoders start
+# bit-identical and the augmentation RNG stays in lockstep: the lever is the only variable.
+#
+# The lever lives in the per-arm `healthy` / `shortcut` override blocks below (merged as kwargs
+# into `build_mae`):
+#   * P0.5.0 = mask ratio      (healthy.mask_ratio=0.75 vs shortcut.mask_ratio=0.1)
+#   * P0.5.1 = decoder capacity (both mask 0.75; shortcut.decoder_dim/decoder_depth over-powered)
+#
+# The mode is a FULL-RANK-BUT-USELESS rep, so RankMe staying high is the PRECONDITION (not a fire).
+# The gate certifies mode-induction; the DELIVERABLE (reported either way) is the reader verdict:
+# does alignment / uniformity track the probe's crater on an MAE backbone, or is there a quality
+# blind spot? See docs/experiments/phase0/P0.5.0.md, P0.5.1.md.
+#
+# Multi-seed is standing policy (verdict by min-across-N): sweep `seed=0,1,2,...` over invocations.
+#
+#   Fast network-free smoke (synthetic; 4 patches at img16, so keep the shortcut ratio >= ~0.25):
+#     uv run python scripts/positive_control_shortcut.py data=synthetic img_size=16 epochs=6 \
+#       stream.support_per_class=8 stream.query_per_class=8 stream.era_eval_per_class=5 \
+#       'shortcut.mask_ratio=0.25'
+#
+#   On the Gaudi HPU (inside the container; see docs/developing.md):
+#     ./scripts/run_gaudi_dev.sh -m /mnt gaudi-env-cafl4ds:latest 0 \
+#       python scripts/positive_control_shortcut.py device=hpu
+defaults:
+  - encoder: tiny # from-scratch backbone; escalate embed_dim/depth (+ img_size/epochs) for healthy headroom
+  - ssl: mae # C factor: MAE is the vehicle — the shortcut mode is MAE-native
+  - data: imagenette # native photos so a from-scratch MAE has semantic structure to (fail to) learn
+  - stream: iid # F factor: the clean reference ordering (correlation is Phase 1, not here)
+  - filter: accept_all # A factor: B-floor (no selection) — isolate the SSL config
+  - monitor: default # run_alignment=true: MAE now exposes a positive pair (make_views) — alignment on trial
+  - optim: adamw
+  - schedule: warmup_cosine
+  - init: from_scratch # I factor: from_scratch (P0.5.0/P0.5.1) | pretrained (P0.5.2 degrade-from-competent)
+  - gate: shortcut # pass criterion: mode-induction (reader verdict is reported, not gated)
+  - _self_
+
+# The single lever, as per-arm overrides merged into `build_mae`. Both levers are declared on both
+# arms so either can be driven from the CLI without a `+` append. Default = P0.5.0 (mask ratio:
+# healthy 0.75 vs shortcut 0.1, decoders equal). For P0.5.1 drive the decoder instead — set both
+# arms to mask 0.75 (same task) and over-power the shortcut decoder:
+#   'shortcut.mask_ratio=0.75' 'shortcut.decoder_dim=512' 'shortcut.decoder_depth=8'
+healthy:
+  mask_ratio: 0.75
+  decoder_dim: 64
+  decoder_depth: 2
+shortcut:
+  mask_ratio: 0.1
+  decoder_dim: 64
+  decoder_depth: 2
+
+# Data img_size follows the top-level `img_size` so the encoder and the source agree (overrides
+# the imagenette group's own 160). A from-scratch tiny ViT needs a modest side length; escalate
+# per the headroom lesson (P0.3.0) until the HEALTHY arm reaches a good probe.
+data:
+  img_size: ${img_size}
+
+img_size: 64
+batch_size: 128
+seed: 0
+device: cpu
+epochs: 60 # from-scratch horizon: the healthy arm must reach real probe headroom (scout tunes this)
+eval_every_epochs: 2 # health readings (probes are expensive) — every other epoch
+
+# `null` = use the full split; cap per class for cheaper scouts.
+max_per_class: null
+max_train_per_class: null
+
+# Larger held-out probe sets for a stabler RankMe / probe estimate (overrides the iid group).
+stream:
+  support_per_class: 40
+  query_per_class: 50
+  era_eval_per_class: 10
+
+# P0.5.2 candidate MAE-native quality readers ON TRIAL — reported alongside the P0.2 carry-ins
+# (uniformity / alignment), never gated. Enabled here so both arms emit them at every checkpoint.
+monitor:
+  run_clusterability: true # silhouette of a k-means partition of the backbone rep (probe proxy)
+  run_attn_distance: true # attention-weighted mean patch distance (local vs long-range heads)
+  run_alignment_strong: true # alignment under a stronger, semantic-preserving augment
+
+# I=pretrained (P0.5.2) warm-starts the encoder from an IID pre-pass at the chosen capacity;
+# `init.checkpoint: null` defaults it to <pretrain_dir>/<method_name>.pt. Produce it first with
+# scripts/pretrain.py at the SAME encoder capacity (the capacity gate is set at pretraining time).
+pretrain_dir: outputs/pretrain
+
+# Run logs: one JSONL per arm, plus a combined comparison, in the Hydra run dir.
+run_log: run_log.jsonl

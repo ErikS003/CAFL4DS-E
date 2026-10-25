@@ -1,0 +1,12 @@
+# Matched replay extension of the completed strengthened-evaluation study.
+defaults:
+  - adaptation_bdd_last_block_confirmation
+  - override filter: reservoir_compute
+  - _self_
+
+seed_split: scope_replay_development_20260929
+run_name: bdd_scope_replay
+
+hydra:
+  run:
+    dir: outputs/adaptation-bdd/scope-replay/20260929

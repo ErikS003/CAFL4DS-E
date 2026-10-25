@@ -1,0 +1,16 @@
+{
+  "output": "outputs/functional-persistence/20261020",
+  "notebook": "notebooks/sums/54_functional_persistence.ipynb",
+  "previous": "outputs/response-reliability/20261020",
+  "profiles": "outputs/functional-health-profile/20261020",
+  "local": "outputs/functional-response-profile/20261020",
+  "outcomes": "outputs/preaction-benefit/20261019",
+  "geometry": "outputs/geometry-interpretation/20261020",
+  "horizons": [1, 8, 32, 128, 384],
+  "maximum_SSL": 27648,
+  "encoder_passes": 1584,
+  "image_forwards": 354816,
+  "forecast_ridge_fits": 7812,
+  "minimum_free_mib": 1536,
+  "max_output_mib": 512
+}

@@ -1,0 +1,22 @@
+# Fixed confirmation of the existing TinyViT-MAE replay recipe. No training hyperparameter tuning.
+defaults:
+  - adaptation_bdd_clean_warm_mae_replay
+  - _self_
+
+seeds: [2003, 2011, 2017, 2027, 2029]
+seed_split: advantage_confirmation_20260927
+run_name: bdd_replay_advantage_confirmation
+eval_every: 512
+save_final_well: true
+probe_panel_seeds: [20260927, 20260928]
+few_shot_counts: []
+
+stream:
+  canary_seed: 0
+  support_per_canary: 25
+  query_per_canary: 500
+  era_query_per_cell: 50
+
+hydra:
+  run:
+    dir: outputs/adaptation-bdd/replay-advantage-confirmation/20260927

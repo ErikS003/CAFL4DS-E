@@ -1,0 +1,26 @@
+study:
+  _target_: cafl4ds.block_anchor.BlockAnchorStudy
+  minimum_gain_pp: 0.25
+  gain_scale_pp: 0.5
+  domain_budget_pp: 1.0
+  support_half_width_pp: 0.5
+  crossed_half_width_pp: 1.0
+  required_fraction: 0.8
+  rank_ratio_floor: 0.6
+  variance_ratio_floor: 0.5
+horizons: [8, 32]
+parent_step: 128
+sources: 6
+ssl_seed: 5003
+interim_panels: 64
+final_panels: 256
+workers: 4
+bootstrap_repetitions: 2000
+bootstrap_seed: 76601
+precision: outputs/target-precision-budget/20261015-gpu
+states: outputs/target-alignment-measurement/20261015-gpu
+guard: outputs/fresh-functional-guard/20261014-gpu
+frames: outputs/fresh-functional-guard/20261014-frames
+reference: outputs/functional-retention/20261014-cached
+pilot: outputs/anchor-horizon/20261015-pilot
+output: outputs/block-anchor/20261015-expanded

@@ -1,0 +1,3 @@
+# I = from-scratch: keep the encoder's random init (the degradation-sensitive regime).
+mode: from_scratch
+checkpoint: null

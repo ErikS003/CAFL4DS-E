@@ -1,0 +1,29 @@
+# IID (shuffled) SSL pre-pass that produces the I=pretrained warm-start checkpoint.
+# Crucially the stream is `iid`, NOT class_blocked: the warm start must be a well-behaved
+# reference, so stream correlation enters ONLY in the streaming phase (scripts/run_loop.py).
+#
+#   uv run python scripts/pretrain.py -m ssl=mae,simsiam
+#   (fast network-free: append `data=synthetic img_size=16`)
+defaults:
+  - encoder: tiny
+  - ssl: mae # C factor: mae | simsiam
+  - data: stl10 # data source: stl10 | synthetic
+  - stream: iid # MUST be iid — see module docstring
+  - optim: adamw
+  - _self_
+
+img_size: 32
+batch_size: 32
+seed: 0
+device: cpu
+epochs: 3 # passes over the IID stream
+
+data_root: /mnt/stl10 # shared STL-10 (torchvision layout); override for a local copy
+max_per_class: 120
+max_train_per_class: 80
+
+pretrain_dir: outputs/pretrain # checkpoints saved as <pretrain_dir>/<method_name>.pt
+# Optional whole-method checkpoint (encoder + SSL heads). This avoids replacing competent
+# pretrained heads with random heads when studying constrained online adaptation.
+full_method_path: null
+grad_clip: 1.0

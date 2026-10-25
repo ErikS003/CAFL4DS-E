@@ -1,0 +1,22 @@
+study:
+  _target_: cafl4ds.h8_health_information.H8HealthInformation
+  penalty: 10.0
+  sham_count: 32
+  sham_seed: 81201
+  minimum_reduction: 0.1
+precision: outputs/target-precision-budget/20261015-gpu
+block: outputs/block-anchor/20261015-expanded
+states: outputs/target-alignment-measurement/20261015-gpu
+guard: outputs/fresh-functional-guard/20261014-gpu
+frames: outputs/fresh-functional-guard/20261014-frames
+reference: outputs/functional-retention/20261014-cached
+old_bridge: outputs/task-aligned-health-bridge/20261015-gpu
+output: outputs/h8-health-information/20261015-development
+sources: [fresh_00, fresh_01, fresh_02, fresh_03, fresh_04, fresh_05]
+contexts: [day_end, night_end, return_early]
+parents: [128, 256, 288]
+horizon: 8
+panels: 256
+bootstrap_repetitions: 2000
+bootstrap_seed: 81901
+permutation_seed: 73101

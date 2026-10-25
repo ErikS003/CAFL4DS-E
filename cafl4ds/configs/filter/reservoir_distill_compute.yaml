@@ -1,0 +1,12 @@
+# B1-D: compute-matched reservoir replay plus cached-feature distillation. Every arrival enters
+# Algorithm R with its normalized backbone embedding at arrival time. Replayed examples constrain
+# the live encoder with cosine distance while total optimizer batch size remains fixed.
+_target_: cafl4ds.filters.composite.CompositeSelector
+admission: []
+buffer:
+  _target_: cafl4ds.filters.reservoir.FeatureDistillationReservoirReplay
+  capacity: 256
+  replay_batch: 16
+  max_train_batch: ${batch_size}
+  distill_weight: 1.0
+  seed: ${seed}

@@ -1,0 +1,8 @@
+# The real CIFAR-100 labeled split (resized). Labels carried only for ordering + eval.
+# The canonical catastrophic-forgetting benchmark (distinct, learnable fine classes).
+# Download once: torchvision.datasets.CIFAR100(root=..., train=..., download=True).
+_target_: cafl4ds.data.sources.CIFAR100Source
+root: ${data_root}
+split: train
+img_size: ${img_size}
+max_per_class: ${max_per_class}

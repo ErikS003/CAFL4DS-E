@@ -1,0 +1,12 @@
+# P0.2.4 stressor — DELIBERATE UNDERTRAINING (an immature but HEALTHY representation).
+#
+# The sub-base-LR single-pass corner P0.2.2's E4 already grazes (RankMe @ proj dips below the bar
+# at 0.25x/0.5x): an undertrained projector has not expanded, so its geometry is immature but NOT
+# collapsed. `overrides` is merged over the base config for the TEST arm only; the reference arm
+# runs the full certified 40-epoch horizon at base LR.
+name: undertrained
+overrides:
+  epochs: 1 # single pass over the stream
+  eval_every_epochs: 0.125 # 8 health readings within the single pass (matches E1/E4 cadence)
+  optim:
+    lr: 2.5e-4 # 0.25x the 1e-3 base LR — the "from below" undertrained corner

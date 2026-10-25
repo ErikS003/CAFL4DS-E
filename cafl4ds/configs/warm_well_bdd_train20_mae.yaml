@@ -1,0 +1,31 @@
+# Clean competent initialization for the full BDD P1.2 gate. Only the deterministic 20% warm
+# partition of official train is seen here; the complementary 80% is reserved for the online drive,
+# official val is evaluation-only, and test remains untouched.
+defaults:
+  - warm_well
+  - override backbone: mae
+  - override data: bdd
+  - _self_
+
+img_size: 64
+batch_size: 32
+seed: 101
+device: cpu
+bdd_root: C:/Users/ehceirs/datasets/bdd100k-full/bdd100k
+
+data:
+  split: train
+  min_canary_count: 50
+  partition_role: warm
+  warm_fraction: 0.2
+  partition_seed: 20260921
+
+stream:
+  support_per_canary: 25
+  query_per_canary: 25
+
+well_out: outputs/p1.2/wells/mae_bdd_train20_s101.pt
+
+hydra:
+  run:
+    dir: outputs/p1.2/warm-mae-bdd-train20/20260921-s101

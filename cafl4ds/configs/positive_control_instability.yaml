@@ -1,0 +1,78 @@
+# Phase-0 positive control (P0.4.0) — the INSTABILITY / DIVERGENCE-instrument CALIBRATION gate.
+#
+# LR-driven divergence over MAE: two arms of the SAME MAE over the SAME IID STL-10 stream from a
+# seed-reset, bit-identical start, differing ONLY in the learning rate:
+#   * healthy = a sane LR      -> loss finite throughout; grad norm bounded & ~stationary (QUIET).
+#   * PC      = a pathological LR -> loss runs to non-finite; grad norm blows up (FIRES).
+# Warmup is OFF and grad-clip is OFF on BOTH arms so (a) LR is the sole difference and (b) clipping
+# (the standard mitigation) cannot mask the blow-up. The gate is the CONTRAST between the two arms'
+# grad-norm traces + the divergence event; see docs/experiments/phase0/P0.4.0.md.
+#
+# Why MAE: divergence needs an UNBOUNDED loss — MAE's per-patch MSE can blow up to inf/NaN, whereas
+# SimSiam's bounded negative-cosine loss COLLAPSES (not diverges), so SimSiam is the P0.2 vehicle and
+# the wrong one here. Divergence is an OPTIMIZATION phenomenon, so (unlike forgetting) it reproduces
+# faithfully at toy scale — a handful-of-steps, seconds-on-CPU study.
+#
+#   uv run python scripts/positive_control_instability.py
+defaults:
+  - encoder: tiny # SAME tiny ViT as P0.1/P0.2 — no capacity scale-up
+  - ssl: mae # the divergence vehicle: unbounded MSE reconstruction loss (see header)
+  - data: stl10 # data source: stl10 | synthetic
+  - stream: iid # the CLEAN reference ordering (correlation/surprise is P0.4.1 + Phase 1)
+  - filter: accept_all # A factor: B-floor (no selection) — isolate the SSL config
+  - monitor: default
+  - optim: sgd # SGD (momentum): the UNDAMPED optimizer that gives a gradual runaway (see optim/sgd.yaml)
+  - schedule: warmup_cosine # warmup fraction forced to 0 below (warmup OFF)
+  - _self_
+
+img_size: 32 # SAME as P0.1/P0.2
+batch_size: 128
+seed: 0
+device: cpu # override device=hpu for an escalated run
+
+# The horizon. Divergence NaNs in a handful of steps at a high LR; a few epochs give the healthy
+# arm room to show GENUINE descending-loss learning (the quiet baseline must not be a degenerate
+# artifact) and give a just-past-threshold PC a gradual runaway with observable lead time.
+epochs: 8
+eval_every_epochs: 1 # health readings/epoch — RankMe is reported (confirms collapse on the ref arm), not gated
+
+# WARMUP OFF and CLIP OFF on both arms: LR is the sole lever, and clipping must not mask the blow-up.
+schedule:
+  warmup_frac: 0.0
+grad_clip: null
+
+# Cheap monitor: grad-norm + loss ARE the divergence readouts. RankMe/geometry are kept (label-free,
+# free) but the expensive probes are off; on a diverged model the closing health read is skipped.
+monitor:
+  run_knn: false
+  run_linear: false
+  run_alignment: false
+
+# The single lever. `lr_healthy` = the sane quiet reference (stable even without warmup/clip).
+# `lr_sweep` = the PC dose-response: one PC arm per LR, run against the one shared healthy arm, to
+# show a stability THRESHOLD (not a knife-edge). Low entries repeat the stable band (a PC at a sane
+# LR does NOT diverge); the smallest DIVERGING LR is the just-past-threshold operating point for the
+# leading-indicator read (a gradual runaway with lead time), and the runaway speeds up monotonically
+# above it. Calibrated for SGD(momentum=0.9) on the tiny MAE at img32: stable to ~1.0, threshold ~3.0.
+lr_healthy: 1.0
+lr_sweep: [0.1, 0.3, 1.0, 3.0, 10.0, 30.0]
+
+# Init-transient skip: without warmup the first few steps of ANY arm show a large first-gradient
+# spike that is not divergence (it DECAYS; a runaway GROWS). Steady-state grad-norm stats and the
+# lead-time spike search start at this index so that transient never counts as a blow-up. 3 clears
+# the tiny-MAE transient (steps 0-2 all > 1, then it drops below the steady band by step 3).
+init_skip: 3
+
+data_root: /mnt/stl10
+max_per_class: null # use the full STL-10 train split
+max_train_per_class: null # no training cap
+
+# The two-sided divergence gate. Divergence itself is the loss/grad going NON-FINITE (the
+# unambiguous fingerprint); the grad-norm blow-up is the LEADING INDICATOR of it (the lead-time read),
+# and the headline is the orders-of-magnitude CONTRAST between a diverging peak and the healthy peak.
+gate:
+  divergence_ratio: 5.0 # grad-norm "blow-up" level for the lead-time spike search: >= this x the healthy STEADY peak
+  min_separation: 100.0 # SEPARATES iff the smallest diverging arm's peak grad norm >= this x the healthy steady peak
+  healthy_descends_frac: 0.9 # healthy LEARNS iff its final loss <= this x its initial loss (genuine descent)
+
+run_log: run_log.jsonl

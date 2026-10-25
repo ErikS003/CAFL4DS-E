@@ -1,0 +1,18 @@
+{
+  "source_geometry": "outputs/geometry-interpretation/20261020",
+  "source_fitting": "outputs/conditioning-fitting/20261020",
+  "source_evaluation": "outputs/early-state-adaptation/20261019/evaluation",
+  "output": "outputs/support-regularization/20261020",
+  "notebook": "notebooks/sums/46_support_regularization.ipynb",
+  "lambdas": [0.0001, 0.001, 0.01, 0.1],
+  "families": ["raw", "whiten_monitor", "whiten_audit"],
+  "points": 243,
+  "development_points": 27,
+  "transfer_points": 216,
+  "cv_folds": 5,
+  "collection_newton_fits": 209952,
+  "repeat_audit_fits": 486,
+  "independent_audit_fits": 486,
+  "minimum_free_mib": 1536,
+  "max_output_mib": 512
+}

@@ -1,0 +1,11 @@
+# P0.2.4 stressor — HEAVY AUGMENTATION (over-strong views, still a HEALTHY representation).
+#
+# Aggressive crops (low min_scale) + strong colour jitter genuinely lower alignment/uniformity
+# without collapsing the representation. The natural false-fire risk for the uniformity/alignment
+# pair. `overrides` is merged over the base config for the TEST arm only; the reference arm keeps
+# the certified default augmentation (aug_min_scale=0.4, aug_jitter_strength=1.0).
+name: heavy_aug
+overrides:
+  ssl:
+    aug_min_scale: 0.08 # crop far more aggressively than the 0.4 default
+    aug_jitter_strength: 2.0 # double the published ColorJitter magnitude

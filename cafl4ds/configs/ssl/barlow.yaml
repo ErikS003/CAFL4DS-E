@@ -1,0 +1,14 @@
+# C = Barlow Twins: joint-embedding via cross-correlation (invariance + redundancy reduction,
+# no predictor, no stop-gradient, no negatives). The redundancy-collapse-capable backbone —
+# P0.2.3's vehicle for closing the *fire* side of off-diag covariance (a sub-mode SimSiam's
+# point collapse never produces). Built via a factory that sizes the projector to the shared
+# encoder (script passes `encoder=`).
+_target_: cafl4ds.ssl.factory.build_barlow
+proj_hidden: 256
+proj_dim: 128
+# Weight of the redundancy-reduction (off-diagonal) term; ignored when anti_collapse=false.
+lambd: 5e-3
+# Anti-collapse mechanism (the redundancy-reduction term). Set false for the forced
+# redundancy-collapse positive control (P0.2.3); the positive_control experiment overrides
+# this per-arm.
+anti_collapse: true

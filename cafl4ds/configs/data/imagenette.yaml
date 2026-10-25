@@ -1,0 +1,9 @@
+# Imagenette (10-class ImageNet subset, fast.ai) — the MAE ViT-B *pretraining-distribution* proxy for
+# the P0.3.6 label-free forgetting fire: the replayable "task A" whose competence is genuinely
+# ImageNet-sourced, so a replay control can actually protect it. Native photos; the ViT-B encoder
+# upsamples img_size -> 224. Download imagenette2-320.tgz from fast.ai and extract under root.
+_target_: cafl4ds.data.sources.ImagenetteSource
+root: /mnt/imagenette/imagenette2-320
+split: train
+img_size: 160
+max_per_class: ${max_per_class}

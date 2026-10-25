@@ -1,0 +1,16 @@
+prior_covariance: outputs/single-image-learning-rate/20261023-covariance-130warm
+arm: covariance_regularized_adaptive_lr
+covariance_warm_multiplier: 1.30
+covariance_target_ratio: 1.10
+covariance_weight: 10.0
+pressure_gain: 9.0
+variance_floor_ratio: 1.0
+variance_weight: 0.25
+regularizer_batch_size: 32
+maximum_trials: 8
+minimum_rate_factor: 0.000001
+headroom_safety: 0.8
+offered: 57600
+checkpoint_stride: 384
+progress_stride: 32
+minimum_free_gib: 2.0

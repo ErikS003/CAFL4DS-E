@@ -1,0 +1,10 @@
+# P0.3.8 arm G — the COSMETIC phase-B vehicle: CIFAR-100 with chroma dropped (Rec.601 luminance,
+# 3-channel). Spatial/object structure is intact; only color is gone. Tests whether the MAE recon-loss
+# reader FALSE-FIRES on an output shift the representation shrugs off (grayscale ⊂ color) — a
+# probe-vs-recon divergence check on the label-free reader P0.3.6/P0.3.7 crowned as trustworthy.
+_target_: cafl4ds.data.sources.CIFAR100Source
+root: /mnt/cifar100
+split: train
+img_size: 32
+max_per_class: ${max_per_class}
+transform: grayscale

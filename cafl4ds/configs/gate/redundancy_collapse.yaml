@@ -1,0 +1,20 @@
+# Redundancy-/dimensional-collapse gate (P0.2.3) — pair with `ssl=barlow`.
+#
+# The point-collapse gate is the wrong instrument for a decorrelation vehicle (Barlow Twins with
+# its redundancy-reduction term ablated): its projector BatchNorm holds per-feature variance at
+# unit, and its loss floor is NOT the SimSiam -1 constant-solution value, so a RankMe-drop +
+# loss-floor read misfires. Redundancy collapse leaves a different fingerprint, read here from the
+# method-agnostic collapse-suite envelope at one surface (`surface`) — see P0.2.3.md:
+#   * offdiag_cov FIRES (PC/healthy >= min_offdiag_ratio): the *fire* side of off-diagonal
+#     covariance P0.2.2's point-collapse vehicle could never reach. The headline test.
+#   * mean_feature_var STAYS QUIET (healthy/PC < max_variance_ratio, i.e. does NOT clear the fire
+#     bar): the direct discriminator vs point collapse — BatchNorm preserves per-dim variance.
+#   * RankMe corroborates (healthy/PC >= min_rankme_ratio): rank detectors see dimensional
+#     collapse too, so the low-rank subspace should register here as well.
+# Read on the PROJECTOR surface: Barlow's cross-correlation loss operates on projector outputs, so
+# that is where the redundancy fingerprint is guaranteed (backbone response is a bonus, not gated).
+mode: redundancy_collapse
+surface: proj # envelope surface to read: "proj" (Barlow's loss space) | "backbone"
+min_offdiag_ratio: 2.0 # offdiag_cov PC/healthy must clear this to FIRE (same bar as P0.2.2's E1)
+max_variance_ratio: 2.0 # mean_feature_var healthy/PC must stay BELOW this (quiet; expected ~1.0)
+min_rankme_ratio: 2.0 # RankMe healthy/PC corroboration bar (rank sees dimensional collapse)

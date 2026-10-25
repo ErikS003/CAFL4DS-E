@@ -1,0 +1,3 @@
+prior_learning_rate: outputs/single-image-learning-rate/20261023-covariance-backtracking
+covariance_warm_multiplier: 1.30
+arm: covariance_adaptive_lr_130warm

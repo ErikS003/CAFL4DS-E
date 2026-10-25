@@ -1,0 +1,31 @@
+prior: outputs/long-memory-replication/20261018
+support_source: outputs/target-precision-budget/20261015-gpu
+selection_source: outputs/natural-health-rate/20261016-intake/selection.json
+metadata_source: outputs/natural-health-rate/20261016-intake/metadata.json
+archive_index: outputs/temporal-bdd/20261011-intake/archive_index.json
+output: outputs/early-state-adaptation/20261019
+evaluation: outputs/early-state-adaptation/20261019/evaluation
+notebook: notebooks/sums/39_early_state_adaptation.ipynb
+blocks: [1, 2, 3]
+seed: 5003
+ages: [512, 4096]
+contexts: [1, 2, 3, 4]
+steps: 512
+early_step: 512
+max_clips: 64
+network_budget_gib: 2
+max_batches: 512
+minimum_batches: 512
+queries_per_cell: 512
+health_points: [0, 1, 4, 16, 64, 128, 256, 512]
+audit_points: [0, 1, 4, 16, 64, 128, 256, 512]
+capability_points: [128, 512]
+terminal_draws: 12
+intermediate_draws: 12
+fork_seed_offset: 121003
+bootstrap_draws: 2000
+bootstrap_seed: 193039
+minimum_free_mib: 768
+max_output_mib: 512
+max_SSL: 52224
+max_finetune_fits: 1224

@@ -1,0 +1,10 @@
+# Compute-matched B1 control: every arrival enters the reservoir, but the optimizer sees no more
+# than one original batch (half incoming and half replay once the reservoir is warm).
+_target_: cafl4ds.filters.composite.CompositeSelector
+admission: []
+buffer:
+  _target_: cafl4ds.filters.reservoir.ReservoirReplay
+  capacity: 256
+  replay_batch: 16
+  max_train_batch: ${batch_size}
+  seed: ${seed}

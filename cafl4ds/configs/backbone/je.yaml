@@ -1,0 +1,19 @@
+# @package _global_
+# backbone = joint-embedding (SimSiam). `family` drives the Phase-0 trust annotation; the monitor
+# reads the projector surface (_proj) where the collapse suite is calibrated, and drift_surfaces is
+# on so the past-data-free projector drift (P0.6.1) is logged.
+family: je
+ssl:
+  _target_: cafl4ds.ssl.factory.build_simsiam
+  proj_hidden: 256
+  proj_dim: 128
+  pred_hidden: 64
+  anti_collapse: true
+monitor:
+  _target_: cafl4ds.monitor.HealthMonitor
+  knn_k: 20
+  run_knn: true
+  run_linear: true
+  run_alignment: true
+  align_seed: 0
+  drift_surfaces: true

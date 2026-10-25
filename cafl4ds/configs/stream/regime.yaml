@@ -1,0 +1,14 @@
+# The deployment diet (P1.0.2): attribute-driven era ordering. Orders eras on the source's regime
+# axis (the shift-walk); reserves the probe set on the orthogonal canary axis. `block_size` is the
+# correlation-strength knob (null = contiguous regimes, maximal correlation).
+_target_: cafl4ds.data.regime.RegimeStream
+source: ${data}
+batch_size: ${batch_size}
+block_size: null
+support_per_canary: 10
+query_per_canary: 10
+era_query_per_cell: 0 # >0 reserves balanced condition-specific queries for probe-on-past
+max_train_per_regime: ${max_train_per_regime}
+seed: ${seed} # within-regime frame shuffle — varies per drive across the seed ensemble
+canary_seed: 0 # held-out probe reservation — FIXED (decoupled from ${seed}) so every drive and the
+# warm well hold out the identical probe set, disjoint from all SSL training (audit P1.0 A1)

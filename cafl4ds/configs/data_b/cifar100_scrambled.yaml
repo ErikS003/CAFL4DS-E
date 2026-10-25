@@ -1,0 +1,11 @@
+# P0.3.8 arm S — the HARD-DISJOINT phase-B vehicle: CIFAR-100 with spatial structure destroyed via
+# Fourier phase-scrambling (amplitude spectrum kept, phase randomized → texture, no object structure).
+# Same cross-dataset harness as P0.3.6 (task A = imagenette); only the phase-B distribution changes,
+# to attempt the genuine (savings < 1) pole the near-IID color-CIFAR fire never reached.
+_target_: cafl4ds.data.sources.CIFAR100Source
+root: /mnt/cifar100
+split: train
+img_size: 32
+max_per_class: ${max_per_class}
+transform: phase_scramble
+transform_seed: ${seed}

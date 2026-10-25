@@ -1,0 +1,21 @@
+controller:
+  _target_: cafl4ds.natural_health_rate.NaturalHealthRate
+  threshold: 0.1
+  patience: 2
+  ramp_arrivals: 32
+  reference_step: 132
+  interval: 8
+buffer:
+  _target_: cafl4ds.filters.window_replay.WindowReplay
+  capacity: 256
+  replay_batch: 16
+  seed: 73919
+windows: [256]
+arms: [full, adaptive]
+draws: [61001, 61007, 61013]
+source: outputs/natural-health-rate/20261016-development
+focused: outputs/natural-health-view/20261016-full-recovery
+frames: outputs/natural-health-rate/20261016-frames
+evaluation: outputs/target-precision-budget/20261015-gpu
+output: outputs/natural-health-replay/20261017-window256
+notebook: notebooks/sums/25_natural_replay_256.ipynb

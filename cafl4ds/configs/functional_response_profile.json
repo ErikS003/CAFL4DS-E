@@ -1,0 +1,20 @@
+{
+  "output": "outputs/functional-response-profile/20261020",
+  "notebook": "notebooks/sums/52_functional_response_profile.ipynb",
+  "previous": "outputs/functional-health-profile/20261020",
+  "outcomes": "outputs/preaction-benefit/20261019",
+  "geometry": "outputs/geometry-interpretation/20261020",
+  "images": "outputs/early-state-adaptation/20261019/evaluation/images.pt",
+  "magnitudes": [0.25, 0.5],
+  "lambdas": [0.01, 0.001],
+  "probe_seed_offset": 195200,
+  "probe_observed_batch": 127,
+  "reconstruction_updates": 9216,
+  "proposal_updates": 144,
+  "repeat_updates": 144,
+  "maximum_SSL": 9504,
+  "encoder_passes": 720,
+  "image_forwards": 144000,
+  "minimum_free_mib": 1536,
+  "max_output_mib": 512
+}

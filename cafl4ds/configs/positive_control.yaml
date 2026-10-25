@@ -1,0 +1,73 @@
+# Phase-0 positive control (P0.2 gate, recalibrated by P0.2.1) — the collapse-instrument
+# CALIBRATION gate, now with a genuine HEALTHY BASELINE.
+#
+# One session, two arms, identical everything except SimSiam's anti-collapse toggle:
+#   * PC       = SimSiam with anti-collapse DISABLED (predictor bypassed to p=z + stop-gradient off)
+#                -> collapse is mathematically forced (loss -> -1, RankMe -> ~1.9 BN floor).
+#   * healthy  = SimSiam intact (predictor + stop-gradient ON) -> RankMe recovers and HOLDS.
+# Both from-scratch. The gate is the CONTRAST between the two RankMe curves.
+#
+# P0.2.1 regime (why this differs from P0.2's single ~25-step class-blocked pass): P0.2 found
+# that at that toy horizon the intact arm's RankMe decayed indistinguishably from the forced
+# collapse (only the loss floor separated them). The fix is NOT a bigger model but a FAIR
+# TRAINING REGIME — the SAME tiny ViT + img_size, but on the full STL-10 train split, IID
+# (shuffled) ordering, multiple epochs, and a warmup+cosine LR. In that regime the intact
+# model's effective rank dips early then RE-EXPANDS (the healthy U-shape) to ~5.8 while the
+# collapse arm stays pinned near the BatchNorm floor (~1.9): RankMe now cleanly separates.
+#
+# IID is deliberate: it isolates the anti-collapse ablation as the ONLY cause of collapse (no
+# correlated-stream degradation confound — that is Phase 1). The class-blocked correlated
+# stream at this scale shows NO separation (both arms ~2.7) — a Phase-1 phenomenon, not a
+# calibration baseline.
+#
+#   uv run python scripts/positive_control.py
+#   (fast network-free smoke: append `data=synthetic img_size=16 epochs=8 \
+#     stream.support_per_class=8 stream.query_per_class=8 stream.era_eval_per_class=5`)
+defaults:
+  - encoder: tiny # SAME tiny ViT as P0.1/P0.2 — no capacity scale-up
+  - ssl: simsiam # C factor: SimSiam is the collapse-capable backbone (one-toggle ablation)
+  - data: stl10 # data source: stl10 | synthetic
+  - stream: iid # F factor: the CLEAN reference ordering (correlation is Phase 1, not here)
+  - filter: accept_all # A factor: B-floor (no selection) — isolate the SSL config
+  - monitor: default
+  - optim: adamw
+  - schedule: warmup_cosine # warmup + cosine decay (the healthy RankMe re-expands as LR anneals)
+  - gate: point_collapse # pass criterion: point_collapse (P0.2.1) | redundancy_collapse (P0.2.3, ssl=barlow)
+  - _self_
+
+# Shared scalars (must be IDENTICAL across the two arms — the toggle is the only variable).
+# SimSiam heads. The backbone (the representation under study) is UNCHANGED from P0.1/P0.2;
+# only the predictor bottleneck is widened (repo default pred_hidden=64 -> 128). SimSiam's
+# predictor IS its anti-collapse mechanism, and the default 64 (= proj_dim/2) is too narrow at
+# this scale — it left the intact arm marginal in P0.2. Widening just the predictor lifts the
+# healthy RankMe from ~4 (indistinct) to ~5 (cleanly separated); the projector stays at 256.
+ssl:
+  pred_hidden: 128
+
+img_size: 32 # SAME as P0.1/P0.2
+batch_size: 128
+seed: 0
+device: cpu
+epochs: 40 # multi-epoch: the horizon SimSiam needs to reach its stable non-collapsed regime
+eval_every_epochs: 1 # health readings per epoch (probes are expensive, so ~1/epoch, not per-step)
+
+# Data sizing = the P0.2.1 baseline regime. The load-bearing change from P0.2 is DATA VOLUME
+# (full STL-10 train split, ~400 train/class after the held-out reservations) + horizon, NOT
+# model size or batch size (batch 32 vs 128 gives the same RankMe separation). `null` = use all.
+data_root: /mnt/stl10 # shared STL-10 (torchvision layout); override for a local copy
+max_per_class: null # use the full train split
+max_train_per_class: null # no training cap
+
+# Larger held-out probe sets than P0.2 (was 20/20/10) for a more stable RankMe estimate.
+# Overrides the `stream: iid` group's defaults (merged over it via `_self_`).
+stream:
+  support_per_class: 40
+  query_per_class: 50
+  era_eval_per_class: 10
+
+# The numeric pass criterion is the `gate` config group (default `point_collapse`, P0.2.1); the
+# redundancy-collapse vehicle (`ssl=barlow`) selects `gate=redundancy_collapse` (P0.2.3). See the
+# respective configs under `configs/gate/` and docs/experiments/phase0/P0.2.1.md, P0.2.3.md.
+
+# Run logs: one JSONL per arm, plus a combined comparison, in the Hydra run dir.
+run_log: run_log.jsonl

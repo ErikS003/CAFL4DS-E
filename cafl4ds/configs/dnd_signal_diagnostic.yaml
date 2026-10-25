@@ -1,0 +1,13 @@
+study:
+  _target_: cafl4ds.dnd_signal_diagnostic.SignalDiagnostic
+  penalty: 1.0
+  material_loss_pp: 1.0
+  balanced_cost_pp: 0.5
+  domain_cost_pp: 1.0
+source: outputs/dnd-health-transfer/20261016-development
+evaluation: outputs/target-precision-budget/20261015-gpu
+output: outputs/dnd-signal-diagnostic/20261016-cached
+primary_horizon: 32
+horizons: [16, 32, 64]
+draws: [61001, 61007, 61013]
+notebook: notebooks/sums/19_dnd_signal_diagnostic.ipynb

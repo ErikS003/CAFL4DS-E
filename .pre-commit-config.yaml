@@ -1,0 +1,107 @@
+minimum_pre_commit_version: "4.0.1"
+default_install_hook_types: [pre-commit, commit-msg]
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-added-large-files
+        # Curated notebooks embed plots; cap every committed file at 5 MiB.
+        args: ['--maxkb=5120']
+      - id: check-ast
+      - id: check-builtin-literals
+      - id: check-case-conflict
+      - id: check-docstring-first
+      - id: check-executables-have-shebangs
+      - id: check-illegal-windows-names
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-shebang-scripts-are-executable
+      - id: check-symlinks
+      - id: check-toml
+      - id: check-vcs-permalinks
+      - id: check-xml
+      - id: check-yaml
+        args: ["--unsafe"]
+      - id: debug-statements
+      - id: destroyed-symlinks
+      - id: detect-private-key
+      - id: end-of-file-fixer
+      - id: fix-byte-order-marker
+      - id: mixed-line-ending
+      - id: name-tests-test
+        args: ["--pytest-test-first"]
+      - id: no-commit-to-branch
+      - id: pretty-format-json
+        args: [--autofix, --no-sort-keys]
+      - id: trailing-whitespace
+
+  # Strict JSON: reject bare Infinity/-Infinity/NaN tokens that the stock `check-json` accepts
+  # leniently. Harnesses serialize via cafl4ds.jsonio.dumps_valid (non-finite -> null); this guards
+  # against regressions and hand-edited artifacts drifting back to spec-invalid JSON.
+  - repo: local
+    hooks:
+      - id: strict-json-no-nonfinite
+        name: strict JSON (reject Infinity/NaN)
+        entry: python3 scripts/check_strict_json.py
+        language: system
+        types: [json]
+
+  # Secret scanning (catches API keys/tokens, not just private keys).
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.1
+    hooks:
+      - id: gitleaks
+
+  # Validate the CI config(s) for the chosen platform(s) against their schemas.
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.33.2
+    hooks:
+      - id: check-github-workflows
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.12.7
+    hooks:
+      - id: ruff-format
+        exclude: ^docs/
+      - id: ruff
+        exclude: ^docs/
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.17.1
+    hooks:
+      - id: mypy
+        # pytest ships type hints; installing it here makes @pytest.mark.parametrize a
+        # typed decorator under strict mypy (types-requests was unused — no requests dep).
+        additional_dependencies: [pytest]
+        exclude: ^docs/
+
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v3.29.0
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
+
+  - repo: https://github.com/executablebooks/mdformat
+    rev: 1.0.0
+    hooks:
+      - id: mdformat
+        # CHANGELOG.md is owned by Commitizen, which writes raw commit subjects verbatim.
+        # mdformat would "fix" markdown-special chars in them (e.g. escape `_copier_conf`
+        # to `\_copier_conf`), corrupting the entry and re-dirtying the file after every
+        # `cz bump` -- which then fails the next PR's lint. Let Commitizen own it.
+        exclude: (^|/)CHANGELOG\.md$
+        additional_dependencies:
+          # Pin the plugin: an unpinned additional_dependency lets a fresh CI env resolve a
+          # newer mdformat-mkdocs than a cached local env, so markdown that is clean locally
+          # gets reformatted in CI. Renovate bumps this deliberately.
+          - mdformat-mkdocs==5.2.0
+        # --compact-tables: don't pad table cells to the widest cell in the column. Our tables
+        # have some very wide cells (status / "what it establishes"), and padding every other
+        # cell to match blows the table out and makes diffs churn on unrelated edits.
+        args: [--wrap, "120", --compact-tables]
+
+  # Static security analysis for GitHub Actions workflows (injection, permissions, pinning).
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: v1.26.1
+    hooks:
+      - id: zizmor

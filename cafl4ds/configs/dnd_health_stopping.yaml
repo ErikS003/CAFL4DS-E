@@ -1,0 +1,9 @@
+guard:
+  _target_: cafl4ds.dnd_health_stopping.HealthStop
+  threshold: 0.1
+  patience: 2
+original: outputs/regime-windows/20261013-gpu
+monitor: outputs/health-calibration/20261013-gpu
+evaluation_images: outputs/content-filter-bdd/20261011-coverage-half/evaluation_images.pt
+output: outputs/dnd-health-stopping/20261016-development
+seeds: [5003, 5009, 5011]

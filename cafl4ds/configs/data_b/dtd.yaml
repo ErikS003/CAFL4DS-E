@@ -1,0 +1,13 @@
+# Task-B source for the P0.3.10 far-domain MAE forgetting test: DTD (Describable Textures) as a
+# phase-B distribution both FAR from ImageNet (texture, not objects) and matched for INPAINTING
+# DIFFICULTY — at native high resolution DTD is ~1.26x harder to inpaint than Imagenette at the
+# phase-B-start condition, so it applies at least as much MAE update pressure as continued task-A
+# training (unlike EuroSAT, which is far but easy to inpaint and under-powers the shift). DTD is
+# small (47 classes x ~120 pooled images); textures are augmented up to `max_per_class` with
+# texture-preserving crops/flips/rotations from a fixed seed (seed-stable far-domain data). Download
+# once with torchvision.datasets.DTD(root=..., split='train', download=True); mount the dir in.
+_target_: cafl4ds.data.sources.DTDSource
+root: /home/mauricio/data/dtd
+img_size: 224
+max_per_class: ${max_per_class}
+classes: ${task_b_classes} # load only the phase-B split's classes (skip DTD's ~37 unused ones)

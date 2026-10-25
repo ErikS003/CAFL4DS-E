@@ -1,0 +1,37 @@
+# Full-data P1.2 pilot: all attribute-valid BDD100K train images drive online MAE updates while
+# official validation images are the only source of global and condition-specific probes. The test
+# split remains untouched. This one-seed pilot is promoted to the fixed three-seed ensemble only
+# after its runtime and memory profile are verified on the target machine.
+defaults:
+  - adaptation_bdd_mae
+  - _self_
+
+bdd_root: C:/Users/ehceirs/datasets/bdd100k-full/bdd100k
+max_images: null
+max_train_per_regime: null
+seeds: [11]
+seed_split: full_data_pilot
+run_name: bdd_full_mae_adapt_vs_frozen
+
+data:
+  split: train
+  min_canary_count: 50
+
+evaluation_data:
+  _target_: cafl4ds.data.attributes.BDD100KSource
+  bdd_root: ${bdd_root}
+  split: val
+  img_size: ${img_size}
+  max_images: null
+  min_canary_count: 50
+
+# Health reads are less frequent than in the capped development cells, keeping monitoring cost
+# modest across roughly 70k streaming images without changing the update cadence.
+eval_every: 64
+
+hydra:
+  run:
+    dir: outputs/adaptation-bdd/full-mae/${now:%Y%m%d-%H%M%S}
+  sweep:
+    dir: outputs/adaptation-bdd/full-mae-sweeps/${now:%Y%m%d-%H%M%S}
+    subdir: lr_${optim.lr}_u${update_every}

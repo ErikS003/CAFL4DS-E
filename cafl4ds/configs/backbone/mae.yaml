@@ -1,0 +1,20 @@
+# @package _global_
+# backbone = MAE (masked-autoencoder). `family` drives the Phase-0 trust annotation; the monitor
+# logs the backbone-surface vector (MAE exposes no projector), so drift_surfaces stays off.
+family: mae
+ssl:
+  _target_: cafl4ds.ssl.factory.build_mae
+  mask_ratio: 0.75
+  decoder_dim: 64
+  decoder_depth: 2
+  decoder_heads: 4
+  decoder_mlp_ratio: 2.0
+  norm_pix_loss: true
+monitor:
+  _target_: cafl4ds.monitor.HealthMonitor
+  knn_k: 20
+  run_knn: true
+  run_linear: true
+  run_alignment: true
+  align_seed: 0
+  drift_surfaces: false

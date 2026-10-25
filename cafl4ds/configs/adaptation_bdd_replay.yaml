@@ -1,0 +1,20 @@
+# P1.2 follow-up: can the pre-registered B1 reservoir baseline repair the retention loss found
+# under B-floor? Hyperparameters are frozen at the selected P1.2 cell; only the A factor changes.
+defaults:
+  - adaptation_bdd
+  - override filter: accept_all
+  - _self_
+
+# Fresh development seeds: distinct from P1.2 selection [11,23,37] and confirmation
+# [101,103,107,109,113]. Do not use these to make a confirmation claim.
+seeds: [211, 223, 227]
+seed_split: replay_dev
+optim:
+  lr: 1.0e-4
+update_every: 1
+run_name: bdd_je_replay_vs_frozen
+
+hydra:
+  sweep:
+    dir: outputs/adaptation-bdd/replay-sweeps/${now:%Y%m%d-%H%M%S}
+    subdir: ${hydra:runtime.choices.filter}

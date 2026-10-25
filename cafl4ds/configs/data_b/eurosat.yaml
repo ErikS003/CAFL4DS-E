@@ -1,0 +1,10 @@
+# Task-B source for a CROSS-DATASET split (P0.6 far-domain variant): EuroSAT (Sentinel-2 satellite RGB)
+# as a phase-B distribution deliberately FAR from the ImageNet pretraining manifold — the fallback if
+# the same-domain CIFAR shift is too gentle to crater the joint-embedding task-A well. Independent
+# img_size (64, native EuroSAT; the ViT-B encoder upsamples to 224) so task A keeps its own resolution.
+# Download once with torchvision.datasets.EuroSAT(root=..., download=True); mount the dir into the
+# Gaudi container at the same path with an extra `-m` (it lives outside root-owned /mnt).
+_target_: cafl4ds.data.sources.EuroSATSource
+root: /home/mauricio/data
+img_size: 64
+max_per_class: ${max_per_class}

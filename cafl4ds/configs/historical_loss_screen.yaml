@@ -1,0 +1,25 @@
+prior: outputs/episode-health-replay/20261017-t1a
+source: outputs/natural-health-rate/20261016-development
+evaluation: outputs/target-precision-budget/20261015-gpu
+archive_index: outputs/temporal-bdd/20261011-intake/archive_index.json
+selection_source: outputs/natural-health-rate/20261016-intake/selection.json
+bdd_root: C:/CAFL-E/datasets/bdd100k
+intake: outputs/historical-loss-screen/20261017-intake
+frames: outputs/historical-loss-screen/20261017-frames
+output: outputs/historical-loss-screen/20261017-t3
+notebook: notebooks/sums/28_historical_loss_action_screen.ipynb
+max_batches: 1024
+max_clips: 96
+minimum_batches: 1024
+network_budget_gib: 3
+landmarks: [192, 256, 320, 384, 448, 512, 576, 640, 704, 768, 832, 896]
+intervention: 32
+continuation: 32
+draws: [61001, 61007, 61013]
+loss_seeds: [84211, 84223]
+continuation_seed_offset: 89201
+minimum_free_mib: 768
+max_output_mib: 512
+max_collection_ssl: 2560
+max_total_ssl: 5120
+max_collection_fits_per_kind: 231

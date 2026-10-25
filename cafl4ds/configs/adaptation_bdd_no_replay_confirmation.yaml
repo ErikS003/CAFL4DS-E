@@ -1,0 +1,14 @@
+# Causal no-replay arm matched to the fixed replay confirmation.
+defaults:
+  - adaptation_bdd_replay_confirmation
+  - override filter: accept_all
+  - _self_
+
+seed_split: replay_causal_ablation_20260927
+run_name: bdd_no_replay_causal_ablation
+optim:
+  lr: 1.0e-4
+
+hydra:
+  run:
+    dir: outputs/adaptation-bdd/replay-causal-ablation/20260927

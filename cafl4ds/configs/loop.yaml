@@ -1,0 +1,52 @@
+# Phase-0 streaming loop experiment (the B-floor knob only).
+#
+# Exit matrix — run with `-m` to sweep C x I:
+#   uv run python scripts/run_loop.py -m ssl=mae,simsiam init=from_scratch,pretrained
+# (init=pretrained needs a warm-start checkpoint; make it first with scripts/pretrain.py.)
+#
+# Fast network-free smoke: append `data=synthetic img_size=16`.
+defaults:
+  - encoder: tiny
+  - ssl: mae # C factor: mae | simsiam
+  - data: stl10 # data source: stl10 | synthetic
+  - stream: class_blocked # F factor: class_blocked | iid
+  - filter: accept_all # A factor: B-floor (only knob in Phase 0)
+  - monitor: default
+  - optim: adamw
+  - init: from_scratch # I factor: from_scratch | pretrained
+  - _self_
+
+# Shared scalars (interpolated into the groups above).
+img_size: 32
+batch_size: 32
+seed: 0
+device: cpu
+eval_every: 5
+
+# Data sizing (kept small for CPU; raise for the HPU runs).
+data_root: /mnt/stl10 # shared STL-10 (torchvision layout); override for a local copy
+max_per_class: 120 # cap images loaded per class from the source
+max_train_per_class: 80 # cap training images per class after held-out reservations
+
+# Warm-start checkpoints (I=pretrained). Resolved to an absolute path by the run script.
+pretrain_dir: outputs/pretrain
+
+# Run log: one JSONL in the Hydra run dir, loss + health as separate series.
+run_name: null # defaults to "<method>_<init>" in the run script
+run_log: run_log.jsonl
+
+loop:
+  _target_: cafl4ds.loop.StreamingLoop
+  eval_every: ${eval_every}
+  grad_clip: 1.0
+  device: ${device}
+
+# Downstream (validating-axis) evaluation, off by default so the plain loop is unchanged.
+# Turn on for the three Phase-0 establishing questions on a correlated stream, e.g.:
+#   uv run python scripts/run_loop.py ssl=simsiam stream=class_blocked \
+#     eval.probe_on_past=true eval.compare_b5=true
+eval:
+  probe_on_past: false # record the per-era accuracy matrix -> Backward Transfer / Forgetting
+  compare_b5: false # compare the adapted encoder vs the init-matched frozen backbone (B5)
+  probe: knn # knn | linear (labels used HERE ONLY)
+  knn_k: 20

@@ -1,0 +1,7 @@
+predecessor: outputs/single-image-zero-threshold/20261024-queued-after-n77
+arm: covariance_regularized_J_rescue
+rescue_initial_factor: 0.25
+rescue_shrink_factor: 0.25
+maximum_rescue_trials: 4
+minimum_J_improvement: 0.00001
+poll_seconds: 20

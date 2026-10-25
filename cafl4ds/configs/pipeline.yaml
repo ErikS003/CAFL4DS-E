@@ -1,0 +1,6 @@
+_target_: cafl4ds.pipeline.Pipeline
+message: hello
+steps:
+  - _target_: cafl4ds.pipeline.Upper
+  - _target_: cafl4ds.pipeline.Repeat
+    times: 3

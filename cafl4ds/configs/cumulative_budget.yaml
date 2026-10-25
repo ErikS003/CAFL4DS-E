@@ -1,0 +1,21 @@
+study:
+  _target_: cafl4ds.cumulative_budget.CumulativeBudgetStudy
+  minimum_gain_pp: 0.25
+  budget_pp: 1.0
+  gain_scale_pp: 0.5
+precision: outputs/target-precision-budget/20261015-gpu
+block: outputs/block-anchor/20261015-expanded
+states: outputs/target-alignment-measurement/20261015-gpu
+guard: outputs/fresh-functional-guard/20261014-gpu
+frames: outputs/fresh-functional-guard/20261014-frames
+reference: outputs/functional-retention/20261014-cached
+output: outputs/cumulative-budget/20261015-stopping
+sources: [fresh_00, fresh_01, fresh_02, fresh_03, fresh_04, fresh_05]
+candidate_panels: [384, 512]
+planning_repetitions: 1000
+planning_seed: 86601
+interim_panels: 64
+new_seed_start: 83001
+workers: 4
+bootstrap_repetitions: 2000
+bootstrap_seed: 86801

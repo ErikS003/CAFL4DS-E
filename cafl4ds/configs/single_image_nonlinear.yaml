@@ -1,0 +1,20 @@
+batch_size: 1
+origin_start: 128
+origin_stop: 1088
+origin_stride: 32
+views: 6
+view_seed_namespace: expected-impact-20261021-v1
+assay_seed: 81231
+prefix_end: 512
+validation_end: 352
+test_start: 544
+models: [ridge, rbf, extra_trees]
+designs: [state, image]
+ridge_alpha: 10.0
+rbf_alpha: 1.0
+trees: 128
+tree_depth: 6
+tree_min_leaf: 5
+model_seed: 84631
+bootstrap_seed: 84643
+bootstrap_draws: 4000

@@ -1,0 +1,14 @@
+source: outputs/early-state-adaptation/20261019
+output: outputs/early-state-night-diagnostic/20261019
+notebook: notebooks/sums/40_early_state_night_diagnostic.ipynb
+ages: [512, 4096]
+arms: [current, balanced]
+checkpoints: [128, 512]
+readers: [finetune, knn, linear]
+origins: [16, 128, 512]
+trailing_updates: 16
+minimum_free_mib: 768
+max_output_mib: 64
+new_SSL_updates: 0
+new_readout_fits: 0
+download_bytes: 0

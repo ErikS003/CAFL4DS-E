@@ -1,0 +1,15 @@
+# Network-free CPU smoke with enough control updates to trigger the unchanged collapse gate.
+# Synthetic data yields 8 batches/pass (32 updates at the default pc.epochs=4).
+# 16 passes give the manufactured control 128 updates; the live arm stays single-pass.
+# This seed-0 engineering check does not calibrate degradation on real data.
+defaults:
+  - harness
+  - override data: synthetic
+  - _self_
+
+img_size: 16
+eval_every: 3
+device: cpu
+seed: 0
+pc:
+  epochs: 16

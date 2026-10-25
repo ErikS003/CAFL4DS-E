@@ -1,0 +1,20 @@
+prior: outputs/long-memory-replication/20261018
+future: outputs/natural-health-rate/20261016-frames/intake.json
+evaluation: outputs/target-precision-budget/20261015-gpu
+output: outputs/health-replay-mechanisms/20261018
+notebook: notebooks/sums/36_health_replay_mechanisms.ipynb
+blocks: [1, 2, 3]
+ssl_seeds: [5003, 5009, 5011]
+steps: 128
+health_points: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 32, 64, 128]
+audit_points: [0, 1, 4, 16, 64, 128]
+capability_points: [16, 128]
+terminal_draws: 16
+intermediate_draws: 3
+fork_seed_offset: 82001
+pool_seed_offset: 93001
+ridge_penalty: 10.0
+minimum_free_mib: 768
+max_output_mib: 512
+max_SSL: 23040
+max_finetune_fits: 1710

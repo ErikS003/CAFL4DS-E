@@ -1,0 +1,20 @@
+{
+  "source": "outputs/early-state-adaptation/20261019",
+  "matched": "outputs/matched-fitting-control/20261019",
+  "output": "outputs/content-step-intervention/20261019",
+  "notebook": "notebooks/sums/42_content_step_intervention.ipynb",
+  "continuation_seed_offsets": [241019, 241043],
+  "fork_at": 128,
+  "terminal": 512,
+  "health_points": [0, 16, 128, 384],
+  "minimum_free_mib": 768,
+  "max_output_mib": 224,
+  "prefix_SSL": 1536,
+  "branch_SSL_collection": 36864,
+  "branch_SSL_reproduction": 36864,
+  "max_SSL": 75264,
+  "collection_fits": 2304,
+  "verification_fits": 192,
+  "bootstrap_draws": 2000,
+  "bootstrap_seed": 194042
+}

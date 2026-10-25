@@ -1,0 +1,23 @@
+{
+  "source": "outputs/early-state-adaptation/20261019",
+  "history_source": "outputs/long-memory-replication/20261018",
+  "prior": "outputs/content-step-intervention/20261019",
+  "output": "outputs/preaction-benefit/20261019",
+  "notebook": "notebooks/sums/43_preaction_benefit.ipynb",
+  "history_seeds": [73001, 73009, 73013],
+  "sources": [1, 2, 3],
+  "contexts": [1, 2, 3, 4],
+  "preaction_diets": ["current", "balanced"],
+  "history_updates": 512,
+  "decision_at": 128,
+  "terminal": 512,
+  "ridge_penalty": 10.0,
+  "bootstrap_draws": 2000,
+  "bootstrap_seed": 194043,
+  "minimum_free_mib": 1536,
+  "max_output_mib": 768,
+  "max_SSL": 138240,
+  "collection_fits": 5184,
+  "verification_fits": 432,
+  "max_fits": 5616
+}

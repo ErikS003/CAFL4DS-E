@@ -1,0 +1,8 @@
+# ImageNet-pretrained ViT-B/16 backbone (P0.3.4 pretrained-forgetting vehicle). A frozen
+# ImageNet representation linear-probes ~0.94 on CIFAR-100 task A, so continued narrow training
+# has a deep well to crater — unlike the from-scratch TinyViT (task-A probe ~0.58, borderline
+# contrast). Weights load OFFLINE from a host-fetched state_dict; bind-mount its dir into the
+# Gaudi container (`-m /home/<user>/.cache/torch`) so the run needs no network.
+_target_: cafl4ds.models.vit_torchvision.TorchvisionViTEncoder
+state_dict_path: /home/mauricio/.cache/torch/hub/checkpoints/vit_b_16-c867db91.pth
+weights: null # fallback: torchvision weights enum (downloaded) when state_dict_path is null

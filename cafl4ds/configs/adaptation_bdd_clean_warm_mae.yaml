@@ -1,0 +1,19 @@
+# Clean warm-start P1.2 pilot. The well is learned on a stationary 20% of official train; online
+# adaptation gets only the complementary 80%; probes come only from official val; test is untouched.
+defaults:
+  - adaptation_bdd_full_mae
+  - _self_
+
+seeds: [101]
+seed_split: clean_warm_pilot
+run_name: bdd_clean_warm_mae_adapt_vs_frozen
+well: outputs/p1.2/wells/mae_bdd_train20_s101.pt
+
+data:
+  partition_role: stream
+  warm_fraction: 0.2
+  partition_seed: 20260921
+
+hydra:
+  run:
+    dir: outputs/adaptation-bdd/clean-warm-mae/${now:%Y%m%d-%H%M%S}

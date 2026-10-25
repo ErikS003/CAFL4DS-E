@@ -1,0 +1,12 @@
+# A = B1.5: reservoir + SemDeDup — the real selection bar. Dedup decides what is worth
+# admitting (near-duplicate removal), then the reservoir stores/replays the admitted history.
+# An example of composing two knobs: admission filter + replay buffer in one selector.
+_target_: cafl4ds.filters.composite.CompositeSelector
+admission:
+  - _target_: cafl4ds.filters.dedup.SemDeDup
+    threshold: 0.9
+buffer:
+  _target_: cafl4ds.filters.reservoir.ReservoirReplay
+  capacity: 256
+  replay_batch: ${batch_size}
+  seed: ${seed}

@@ -1,0 +1,21 @@
+{
+  "output": "outputs/reader-bank-cross/20261021",
+  "notebook": "notebooks/sums/55_reader_bank_cross.ipynb",
+  "previous": "outputs/functional-persistence/20261020",
+  "local": "outputs/response-reliability/20261020",
+  "profiles": "outputs/functional-health-profile/20261020",
+  "outcomes": "outputs/preaction-benefit/20261019",
+  "partition_seeds": [195551, 195552, 195553, 195554, 195555, 195556],
+  "reader_lambdas": [0.01, 0.001],
+  "calibration_images_per_reader": 64,
+  "evaluation_images_per_bank": 32,
+  "reader_collection_fits": 1728,
+  "reader_exact_repeats": 72,
+  "reader_independent_fits": 72,
+  "maximum_reader_fits": 1872,
+  "forecast_fits_including_intercept_only": 55296,
+  "SSL": 0,
+  "encoder_passes": 0,
+  "minimum_free_mib": 1536,
+  "max_output_mib": 512
+}

@@ -1,0 +1,8 @@
+# Network-free class-structured images for fast smoke runs and unit tests.
+_target_: cafl4ds.data.sources.SyntheticSource
+num_classes: 4
+per_class: 100
+img_size: ${img_size}
+channels: 3
+noise: 0.3
+seed: ${seed}

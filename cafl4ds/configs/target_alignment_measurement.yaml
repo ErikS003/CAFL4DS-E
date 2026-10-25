@@ -1,0 +1,18 @@
+measurement:
+  _target_: cafl4ds.target_alignment_measurement.TargetAlignmentMeasurement
+  support_half_width_pp: 0.5
+  crossed_half_width_pp: 1.0
+  required_fraction: 0.8
+ssl_seed: 5003
+support_seeds: [61001, 61007, 61013, 61019, 61027, 61031, 61043, 61051, 61057, 61063, 61069, 61079]
+parents: {day_end: 128, night_end: 256, return_early: 264}
+horizon: 32
+support_pool_per_cell: 50
+queries_per_cell: 256
+bootstrap_repetitions: 2000
+bootstrap_seed: 61501
+data_salt: target-alignment-measurement-20261015
+source: outputs/fresh-functional-guard/20261014-gpu
+frames: outputs/fresh-functional-guard/20261014-frames
+reference: outputs/functional-retention/20261014-cached
+output: outputs/target-alignment-measurement/20261015-gpu

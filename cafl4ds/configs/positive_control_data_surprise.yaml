@@ -1,0 +1,95 @@
+# Phase-0 positive control (P0.4.1) — the DATA-driven SURPRISE / SHOCK instability read.
+#
+# The deployment-relevant companion to P0.4.0 (LR-driven divergence). Same instrumented streaming
+# loop and same grad-norm instrument, but the forcing lever is the DATA, not the learning rate: a
+# genuinely-learning MAE is warmed on a base distribution (STL-10), then an out-of-distribution
+# BURST (CIFAR-100) is spliced into the stream, then the base resumes. Two arms over a seed-reset,
+# bit-identical start differing ONLY by whether the burst is injected:
+#   * shock   = base -> OOD burst -> base -> grad-norm SPIKES at the burst (change-point FIRES),
+#               then either RECOVERS to the pre-burst band (transient) or RUNS AWAY (divergence).
+#   * control = base throughout (no burst)         -> grad norm stays IN-BAND (QUIET).
+# The gate is the WITHIN-ARM change-point contrast (burst peak / pre-burst base peak) firing on the
+# shock arm and staying flat on the control arm; see docs/experiments/phase0/P0.4.1.md.
+#
+# Why this is a distinct axis (not another P0.4.0 knob): a surprising batch drives a large loss ->
+# large gradient -> a grad-norm SPIKE, but one the model typically ABSORBS (transient, recoverable)
+# rather than a runaway. So data-surprise exercises the grad norm as a CHANGE-POINT / SHOCK detector,
+# whereas P0.4.0's LR runaway exercises it as a DIVERGENCE detector. The runaway pole is reached only
+# when the shock meets an optimizer near its stability edge (the lr_sweep ladder) — the shock as a
+# TRIGGER, tying back to the P0.4.0 lead-time / operating-envelope finding.
+#
+#   uv run python scripts/positive_control_data_surprise.py
+defaults:
+  - encoder: tiny # SAME tiny ViT as P0.1/P0.2/P0.4.0 — no capacity scale-up
+  - ssl: mae # the vehicle: MAE reconstruction (see norm_pix_loss override below)
+  - data: stl10 # BASE (in-distribution) source the MAE is warmed on
+  - data_b: cifar100 # OOD burst source (override to cifar100_grayscale / cifar100_scrambled for the severity ladder)
+  - filter: accept_all # A factor: B-floor (no selection)
+  - monitor: default
+  - optim: sgd # SGD (momentum): the UNDAMPED optimizer (shared with P0.4.0); flat LR (no scheduler)
+  - _self_
+
+img_size: 32 # SAME as P0.1/P0.2/P0.4.0
+batch_size: 64
+seed: 0
+device: cpu
+
+# RAW (un-normalized) reconstruction MSE — load-bearing for the surprise read. `norm_pix_loss=true`
+# (the default P0.1/P0.4.0 vehicle) normalizes each target patch to unit variance, CAPPING the
+# per-patch loss near 1.0 for ANY unpredictable content — so a competent MAE (already ~0.97) has no
+# headroom for surprise to register in the loss/grad MAGNITUDE. Surprise detection needs the loss
+# magnitude to track reconstruction error, so norm_pix is OFF here (the P0.4.1 vehicle finding, the
+# analogue of P0.4.0's "unbounded loss" / SGD requirements).
+ssl:
+  norm_pix_loss: false
+
+# The stream shape (in steps). `warm_steps` warms the MAE on the base distribution so it is genuinely
+# COMPETENT (the toy-scale precondition: an under-trained MAE finds everything surprising, so the
+# base<->OOD contrast would be weak — see P0.4.1.md). `burst_steps` is the OOD injection; `tail_steps`
+# resumes the base so a transient spike's RECOVERY is observable. Base batches cycle (IID reuse).
+warm_steps: 300
+burst_steps: 8
+tail_steps: 100
+
+# The burst CONTENT. `noise` = uniform-random images x `burst_scale` (the positive control: an
+# out-of-range / saturating sensor-corruption shock whose raw reconstruction error is genuinely
+# large, so the grad norm must spike). `dataset` = the `data_b` distributional OOD (CIFAR variants),
+# in the trained [0,1] range — the NAIVE surprise vehicle P0.4.1 REFUTES: an in-range distribution
+# shift produces reconstruction error comparable to the base (recon difficulty tracks inpaintability,
+# not novelty), so it does NOT fire above the grad-norm variance floor. `burst_scale` is the shock
+# AMPLITUDE (noise only): 1.0 = in-range (does not fire); > 1 saturates out of range (fires). Default
+# `noise` at a firing amplitude for the two-sided gate; override `burst_kind=dataset data_b=...`.
+burst_kind: noise
+burst_scale: 4.0 # fires robustly (~78x) AND recovers (transient) at lr_op; sweep {1,2,4,8,16} for the severity dose-response
+
+# Flat LR (NO scheduler) so the burst is the SOLE perturbation. `lr_op` = the base-stable operating
+# point the two-sided gate is read at (stable on the base per P0.4.0). `lr_sweep` = the runaway ladder:
+# a shock + matched no-burst control at each LR, to show (a) at lr_op the shock spikes-and-recovers
+# while control holds, and (b) near/above the P0.4.0 divergence edge the shock TRIGGERS a runaway the
+# base-only control does not — the data-driven lead-time read.
+lr_op: 1.0
+lr_sweep: [1.0, 3.0, 10.0]
+grad_clip: null # clip OFF so a blow-up is not masked (as in P0.4.0)
+
+# Init-transient skip (as in P0.4.0): the first few no-warmup steps show a large first-gradient spike
+# that DECAYS; pre-burst base-band stats start after this index so it is never read as the base band.
+init_skip: 3
+
+# Cheap monitor: grad norm + loss ARE the readouts; the expensive probes are off.
+monitor:
+  run_knn: false
+  run_linear: false
+  run_alignment: false
+
+data_root: /mnt/stl10
+max_per_class: null
+
+# The two-sided change-point gate, read at `lr_op`.
+gate:
+  base_descends_frac: 0.9 # base COMPETENT iff warm final loss <= this x its initial (genuine descent)
+  surprise_ratio: 1.2 # SURPRISE real iff shock burst mean loss >= this x its pre-burst base mean loss
+  fire_ratio: 2.0 # FIRES iff the CROSS-ARM shock/control same-step burst-peak grad norm >= this (the gate)
+  control_quiet_ratio: 2.0 # QUIET iff control (burst-window peak / pre-burst base peak) grad norm < this
+  recover_ratio: 2.0 # (reported) RECOVERS iff shock tail-min grad norm <= this x its pre-burst base peak
+
+run_log: run_log.jsonl

@@ -1,0 +1,20 @@
+{
+  "output": "outputs/geometry-interpretation/20261020",
+  "notebook": "notebooks/sums/44_geometry_interpretation.ipynb",
+  "source39": "outputs/early-state-adaptation/20261019",
+  "source41": "outputs/matched-fitting-control/20261019",
+  "source42": "outputs/content-step-intervention/20261019",
+  "source43": "outputs/preaction-benefit/20261019",
+  "top_k": 16,
+  "neighbor_k": 10,
+  "control_seed": 194044,
+  "synthetic_seeds": [194044, 194051, 194063],
+  "extraction_batch": 32,
+  "minimum_free_mib": 1536,
+  "max_output_mib": 768,
+  "max_encoder_passes": 846,
+  "expected_points": 423,
+  "expected_edges": 408,
+  "new_SSL": 0,
+  "new_optimizer_fits": 0
+}

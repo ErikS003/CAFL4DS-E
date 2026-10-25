@@ -1,0 +1,10 @@
+batch_size: 1
+origin_start: 128
+origin_stop: 1088
+origin_stride: 32
+prefix_images: 512
+test_origin_start: 544
+ridge_penalty: 10.0
+primary_reader_draw: 51011
+bootstrap_seed: 84301
+bootstrap_draws: 4000

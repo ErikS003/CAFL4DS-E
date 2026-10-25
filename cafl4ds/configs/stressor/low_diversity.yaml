@@ -1,0 +1,12 @@
+# P0.2.4 stressor — LOW-DIVERSITY DATA (a legitimately low-rank but HEALTHY representation).
+#
+# Few classes + reduced per-class volume => near-duplicate eras and a genuinely lower effective
+# rank, WITHOUT any collapse. The natural false-fire risk for RankMe and offdiag_cov. `overrides`
+# is merged over the base config for the TEST arm only; the reference arm stays the canonical
+# 10-class healthy baseline. NB: the test arm's probe set is the same class subset (a smaller,
+# structurally lower-rank eval set) — the comparability caveat documented in P0.2.4.md.
+name: low_diversity
+overrides:
+  stream:
+    class_order: [0, 1] # 2-class subset via EraStream.class_order (works at iid + class_blocked)
+    max_train_per_class: 200 # reduce volume => near-duplicate eras

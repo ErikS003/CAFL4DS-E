@@ -1,0 +1,10 @@
+# C = MAE (default): masked-autoencoder reconstruction. Collapse-resistant; its Phase-1
+# degradation mode is forgetting/overspecialization. Built via a factory that sizes the
+# decoder to the shared encoder (the run script passes `encoder=`).
+_target_: cafl4ds.ssl.factory.build_mae
+mask_ratio: 0.75
+decoder_dim: 64
+decoder_depth: 2
+decoder_heads: 4
+decoder_mlp_ratio: 2.0
+norm_pix_loss: true

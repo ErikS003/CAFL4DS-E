@@ -1,0 +1,25 @@
+encoder:
+  _target_: cafl4ds.models.vit.TinyViTEncoder
+  img_size: 32
+  patch_size: 8
+  in_chans: 3
+  embed_dim: 96
+  depth: 4
+  num_heads: 3
+  mlp_ratio: 2.0
+ssl:
+  _target_: cafl4ds.ssl.factory.build_simsiam
+  proj_hidden: 256
+  proj_dim: 128
+  pred_hidden: 128
+optim:
+  _target_: torch.optim.AdamW
+  lr: 0.001
+  weight_decay: 0.05
+seeds: [7001, 7003]
+warm_updates: 320
+continuation_updates: 128
+batch_size: 128
+cadence: 8
+ridge: 10.0
+output: outputs/collapse-risk-regression/20261014-pilot

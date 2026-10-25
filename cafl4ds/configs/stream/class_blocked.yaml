@@ -1,0 +1,16 @@
+# F = correlated: class-blocked ordering (all of class 0, then class 1, ...). Eras = class
+# blocks. This is the synthetic correlation of Phase 1a. `source` is the chosen data group.
+_target_: cafl4ds.data.streams.EraStream
+source: ${data}
+order: class_blocked
+# Correlation-strength knob (P0.2.2). null = one contiguous block per class (maximal
+# correlation, the P0.2.1 default). Set an integer b (ideally a multiple of batch_size) to
+# round-robin the classes in chunks of b images — smaller b => weaker correlation. Sweep it
+# to trace where correlation-sensitive collapse instruments activate.
+block_size: null
+batch_size: ${batch_size}
+support_per_class: 20
+query_per_class: 20
+era_eval_per_class: 10
+max_train_per_class: ${max_train_per_class}
+seed: ${seed}

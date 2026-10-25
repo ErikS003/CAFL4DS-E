@@ -1,0 +1,21 @@
+# P1.2 primary forgetting vehicle: does a warm MAE improve over its exact frozen twin on the
+# BDD100K validation stream? This reuses the matched-arm/evaluation protocol from adaptation_bdd
+# while changing only the SSL family and MAE-specific artifact namespace.
+defaults:
+  - adaptation_bdd
+  - override backbone: mae
+  - _self_
+
+seed_split: mae_dev
+run_name: bdd_mae_adapt_vs_frozen
+
+# The warm well is supplied explicitly on the command line. Keeping this null prevents an
+# accidental run from silently using a stale or machine-specific checkpoint.
+well: null
+
+hydra:
+  run:
+    dir: outputs/adaptation-bdd/mae/${now:%Y%m%d-%H%M%S}
+  sweep:
+    dir: outputs/adaptation-bdd/mae-sweeps/${now:%Y%m%d-%H%M%S}
+    subdir: lr_${optim.lr}_u${update_every}

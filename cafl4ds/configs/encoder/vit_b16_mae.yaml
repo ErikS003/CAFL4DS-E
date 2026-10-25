@@ -1,0 +1,13 @@
+# MAE-pretrained ViT-B/16 encoder (P0.3.6) — the deep phase-A well for the LABEL-FREE MAE fire.
+# The official MAE checkpoint (He et al. 2022, encoder-only) loads strict-clean at these ViT-B dims
+# after a single `patch_embed.proj` remap; inputs are resized to 224 + ImageNet-normalized inside.
+# `state_dict_path` is host-fetched and bind-mounted; override on the CLI to the container-visible
+# path (e.g. the data dir). Pair with `training_mode=ssl` (MAE) + `pretrained_encoder=true`.
+_target_: cafl4ds.models.vit_mae_pretrained.MAEPretrainedViTEncoder
+state_dict_path: /mnt/cifar100/mae_pretrain_vit_base.pth
+img_size: 224
+patch_size: 16
+embed_dim: 768
+depth: 12
+num_heads: 12
+mlp_ratio: 4.0

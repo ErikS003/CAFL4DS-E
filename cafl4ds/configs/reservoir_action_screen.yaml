@@ -1,0 +1,28 @@
+prior: outputs/reservoir-health-recovery/20261017-base24
+source: outputs/natural-health-rate/20261016-development
+evaluation: outputs/target-precision-budget/20261015-gpu
+archive_index: outputs/temporal-bdd/20261011-intake/archive_index.json
+selection_source: outputs/natural-health-rate/20261016-intake/selection.json
+bdd_root: C:/CAFL-E/datasets/bdd100k
+intake: outputs/reservoir-action-screen/20261017-intake
+frames: outputs/reservoir-action-screen/20261017-frames
+output: outputs/reservoir-action-screen/20261017-paired
+notebook: notebooks/sums/32_reservoir_action_opportunity.ipynb
+max_batches: 1024
+minimum_batches: 1024
+max_clips: 96
+network_budget_gib: 3
+landmarks: [192, 288, 384, 480, 576, 672, 768, 864]
+intervention: 64
+continuation: 64
+horizons: [32, 64, 128]
+draws: [61001, 61007, 61013]
+loss_seeds: [84211, 84223]
+sample_seed: 73919
+admission_seed: 90101
+capacity: 256
+minimum_free_mib: 768
+max_output_mib: 384
+max_collection_ssl: 3072
+max_total_ssl: 6144
+max_collection_fits_per_kind: 192

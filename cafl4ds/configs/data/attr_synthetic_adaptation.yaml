@@ -1,0 +1,12 @@
+# Harder, balanced, network-free attributed images for the P1.2 matched-baseline experiment.
+# The dataset seed is fixed across drive seeds: only model initialization and within-regime order vary.
+_target_: cafl4ds.data.attributes.SyntheticAttributeSource
+num_regimes: 4
+num_canary_classes: 6
+per_cell: 32
+img_size: ${img_size}
+channels: 3
+noise: 0.55
+regime_tint: 0.35
+long_tail: false
+seed: 0

@@ -1,0 +1,5 @@
+# I = pretrained: warm-start the encoder from an IID pre-pass checkpoint (a good basin).
+# `checkpoint: null` lets the run script default it to <pretrain_dir>/<method_name>.pt;
+# set it explicitly to point elsewhere. Produce it first with scripts/pretrain.py.
+mode: pretrained
+checkpoint: null

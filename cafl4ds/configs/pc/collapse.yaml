@@ -1,0 +1,19 @@
+# Manufactured-pathology PC arm for the P1.0.0 harness smoke.
+#
+# Phase-0's cheapest single-pass calibrated fire (scripts/positive_control.py, P0.2): SimSiam
+# with the anti-collapse mechanisms OFF (`anti_collapse=false` drops the predictor + stop-gradient),
+# so the SSL loss rides to its -1 constant-solution floor and the projector RankMe craters. This
+# arm's job is to prove the harness's instruments *fire* — it is a fixed manufactured control and
+# is deliberately independent of the live arm's `ssl`/`init`. Per-mode PC scripts (forgetting, …)
+# plug into the same arm slot for the mode studies.
+kind: collapse
+# Built via the same factory the live SimSiam uses; the script passes `encoder=`.
+ssl:
+  _target_: cafl4ds.ssl.factory.build_simsiam
+  proj_hidden: 256
+  proj_dim: 128
+  pred_hidden: 64
+  anti_collapse: false
+# Multi-epoch horizon so the collapse fires decisively at the tiny smoke scale (the toy-horizon
+# loss-floor + projector-RankMe fingerprint, as in tests/unit/test_positive_control.py).
+epochs: 4

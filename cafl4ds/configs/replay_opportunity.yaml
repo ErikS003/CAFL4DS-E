@@ -1,0 +1,8 @@
+source: outputs/domain-health-calibration/20261018
+evaluation: outputs/target-precision-budget/20261015-gpu
+output: outputs/replay-opportunity/20261019
+notebook: notebooks/sums/38_replay_opportunity.ipynb
+bootstrap_draws: 2000
+bootstrap_seed: 193031
+minimum_free_mib: 768
+max_output_mib: 32

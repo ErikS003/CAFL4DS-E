@@ -1,0 +1,11 @@
+prior_corrected: outputs/single-image-gate-protection/20261023-n73-pilot
+stopped_predecessor: outputs/single-image-retention-budget/20261024-uniform
+arm: corrected_J_stall_exploration
+stall_arrivals: 256
+exploration_factor: 0.0625
+covariance_cooldown: 64
+covariance_warm_multiplier: 1.30
+offered: 57600
+checkpoint_stride: 384
+progress_stride: 32
+minimum_free_gib: 2.0

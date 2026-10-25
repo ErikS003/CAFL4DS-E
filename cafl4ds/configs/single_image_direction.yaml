@@ -1,0 +1,29 @@
+prefix_end: 512
+inner_end: 352
+test_start: 576
+period: 96
+sign_tolerance: 1.0e-10
+families: [logistic, boosting]
+designs: [state, image]
+threshold_min: 0.05
+threshold_max: 0.95
+threshold_step: 0.01
+confidence_threshold: 0.8
+bootstrap_seed: 85103
+bootstrap_draws: 4000
+estimators:
+  logistic:
+    _target_: sklearn.linear_model.LogisticRegression
+    C: 1.0
+    max_iter: 2000
+    solver: lbfgs
+    random_state: 85097
+  boosting:
+    _target_: sklearn.ensemble.HistGradientBoostingClassifier
+    learning_rate: 0.05
+    max_iter: 150
+    max_leaf_nodes: 7
+    min_samples_leaf: 10
+    l2_regularization: 10.0
+    early_stopping: false
+    random_state: 85097

@@ -1,0 +1,7 @@
+# A = SemDeDup admission (Abbas 2023): drop near-duplicate frames by cosine similarity in the
+# live embedding, so the correlated stream's redundancy does not dominate the update. No replay.
+_target_: cafl4ds.filters.composite.CompositeSelector
+admission:
+  - _target_: cafl4ds.filters.dedup.SemDeDup
+    threshold: 0.9
+buffer: null

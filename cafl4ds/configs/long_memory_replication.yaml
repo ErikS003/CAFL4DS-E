@@ -1,0 +1,28 @@
+prior: outputs/memory-age-replay/20261017-reservoir256
+evaluation: outputs/target-precision-budget/20261015-gpu
+archive_index: outputs/temporal-bdd/20261011-intake/archive_index.json
+selection_source: outputs/natural-health-rate/20261016-intake/selection.json
+study_root: outputs/long-memory-replication/20261018
+notebook: notebooks/sums/35_long_memory_replication.ipynb
+blocks: [1, 2, 3]
+ssl_seeds: [5003, 5009, 5011]
+arms: [current, fifo, reservoir]
+max_batches: 4096
+minimum_batches: 4096
+max_clips: 384
+network_budget_gib: 12
+capacity: 256
+sample_seed: 73919
+admission_seed: 90101
+curve_draws: [61001, 61007, 61013]
+endpoint_draws: 256
+loss_seeds: [84211, 84223]
+minimum_free_mib: 768
+max_output_mib: 2304
+max_collection_ssl: 110592
+max_total_ssl: 221184
+max_reader_fits_per_kind: 9679
+reader_workers: 4
+balanced_margin_pp: 1.0
+domain_budget_pp: 1.0
+warm_margin_pp: 0.0

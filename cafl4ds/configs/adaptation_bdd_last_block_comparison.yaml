@@ -1,0 +1,12 @@
+# Development test of restricted encoder plasticity at the matched no-replay recipe.
+defaults:
+  - adaptation_bdd_no_replay_confirmation
+  - _self_
+
+train_scope: last_block
+seed_split: last_block_development_20260927
+run_name: bdd_last_block_comparison
+
+hydra:
+  run:
+    dir: outputs/adaptation-bdd/last-block-comparison/20260927

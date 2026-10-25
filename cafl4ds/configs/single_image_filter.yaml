@@ -1,0 +1,33 @@
+start: 576
+stop: 960
+frames_per_clip: 96
+trajectory_seeds: [5003, 5009]
+rank_weight: 0.25
+variance_weight: 0.25
+admission_threshold: 0.0
+numeric_tolerance: 1.0e-10
+diagnostic_stride: 32
+assay_seed: 81231
+evaluation_assay_seed: 85331
+feature_seed: 81221
+projection_seed: 81211
+random_namespace: singleton-aggregate-filter-random-20261021-v1
+reader_draws: [51011, 51017, 51023]
+reader_steps: 100
+bootstrap_draws: 4000
+bootstrap_seed: 85337
+prefix_end: 512
+inner_end: 352
+regressors:
+  linear:
+    _target_: sklearn.linear_model.Ridge
+    alpha: 10.0
+  nonlinear:
+    _target_: sklearn.ensemble.HistGradientBoostingRegressor
+    learning_rate: 0.05
+    max_iter: 150
+    max_leaf_nodes: 7
+    min_samples_leaf: 10
+    l2_regularization: 10.0
+    early_stopping: false
+    random_state: 85343

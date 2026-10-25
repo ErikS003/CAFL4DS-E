@@ -1,0 +1,7 @@
+# A = B3: loss-gate admission (SOFed 2022) — keep the high-loss (informative, not-yet-learned)
+# fraction of each batch, scored by the live model's per-sample SSL loss. No replay.
+_target_: cafl4ds.filters.composite.CompositeSelector
+admission:
+  - _target_: cafl4ds.filters.loss_gate.LossGate
+    keep_frac: 0.5
+buffer: null

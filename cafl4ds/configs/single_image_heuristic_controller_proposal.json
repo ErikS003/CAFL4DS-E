@@ -1,0 +1,14 @@
+{
+  "kind": "heuristic_design_not_runner_config",
+  "status": "proposed_unimplemented",
+  "protocol": "docs/project-plan/single-image-heuristic-controller.md",
+  "prediction": {"family": "existing_bounded_clock_free_corrected_J", "threshold": "reuse_existing_calibration", "probability_good": 0.5, "probability_borderline": 0.25, "probability_unfavorable": 0.1, "fallback_probability": 0.25, "clipped_fraction_fallback_above": 0.25},
+  "health": {"check_every_arrivals": 128, "normal_lr_factor": 0.25, "caution_lr_factor": 0.0625, "rank_or_variance_ratio_below": 0.85, "covariance_ratio_above": 1.25, "reconstruction_ratio_above": 1.05, "warning_checks": 2, "clear_checks": 2, "hard_covariance_veto": false, "measured_J_veto": false},
+  "burst": {"lookback_arrivals": 256, "trigger_commits_below": 8, "updates": 16, "lr_factor": 0.0625, "minimum_start_spacing_arrivals": 256, "suppressed_during_recovery": true},
+  "task_brake": {"development_readout_every_arrivals": 384, "backup_balanced_gain_pp": 1.0, "backup_confirmation_readouts": 2, "backup_subgroup_loss_pp": 1.0, "backup_subgroup_loss_vs_original_pp": 2.0, "rollback_loss_pp": 2.0, "rollback_confirmation_readouts": 2, "immediate_rollback_loss_pp": 5.0, "final_queries_control_actions": false},
+  "recovery": {"arrivals": 256, "lr_factor": 0.015625, "update_probability": 0.25, "next_mode": "caution"},
+  "numerical_cooldown_arrivals": 64,
+  "maximum_trials_per_arrival": 1,
+  "pilot_offered": 57600,
+  "launch_training": false
+}

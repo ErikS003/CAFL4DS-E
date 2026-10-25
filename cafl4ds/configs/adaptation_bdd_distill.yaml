@@ -1,0 +1,23 @@
+# P1.2 development study: does cached-feature distillation improve compute-matched reservoir
+# replay? These seeds are development-only. A selected candidate would still require five fresh
+# confirmation seeds, but the initial study did not produce a promotable candidate.
+defaults:
+  - adaptation_bdd_replay
+  - override filter: reservoir_distill_compute
+  - _self_
+
+seeds: [467, 479, 487]
+seed_split: feature_distill_dev
+run_name: bdd_je_feature_distill_vs_frozen
+filter:
+  buffer:
+    # Best development cell, retained for reproducibility; not a promoted confirmation setting.
+    distill_weight: 0.1
+
+hydra:
+  run:
+    dir: outputs/adaptation-bdd/feature-distill/${now:%Y%m%d-%H%M%S}
+  sweep:
+    dir: outputs/adaptation-bdd/feature-distill-sweeps/${now:%Y%m%d-%H%M%S}
+    # Include the numeric knob so weight cells cannot overwrite one another.
+    subdir: lambda_${filter.buffer.distill_weight}

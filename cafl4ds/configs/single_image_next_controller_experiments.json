@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "kind": "experiment_design_manifest_not_runner_config",
+  "status": "designed_not_implemented_not_frozen",
+  "protocol": "docs/project-plan/single-image-next-controller-experiments.md",
+  "repeat_stalled_state_feasibility_diagnostic": false,
+  "pilot": {"history": "fresh_00", "seed": 5003, "parent": "original complete N73 parent", "offered": 57600},
+  "confirmation": {"fresh_source_disjoint_histories": 3, "ssl_seeds_per_history": 3, "offered": 57600, "resolved_identity_manifest": null},
+  "window": {"offered": 256, "update_every": 4, "lr_factor": 0.0625, "maximum_windows_per_attempt": 3, "rewind_arrivals": false, "require_J_improvement": false},
+  "promotion": {"control_balanced_gain_pp": 1.0, "positive_support_panels_required": 2, "support_panels": 3, "subgroup_loss_vs_retained_pp": 1.0, "subgroup_loss_vs_original_parent_pp": 2.0, "audit_balanced_gain_strictly_positive": true, "audit_attempts_per_candidate_attempt": 1, "reuse_audit_queries": false, "audit_budget_and_ids": null, "on_audit_exhaustion": "retained_only"},
+  "first_batch": [
+    {"id": "W0", "adoption": "always", "covariance_veto": false},
+    {"id": "W1", "adoption": "window_promotion", "covariance_veto": false},
+    {"id": "C1", "adoption": "window_promotion", "covariance_veto": true, "covariance_warm_multiplier": 1.3, "cooldown_arrivals": 0, "rate_search": false}
+  ],
+  "reporting": {"final_evaluation_stride_arrivals": 768, "report_both_candidate_and_retained": true, "primary": "retained_time_averaged_balanced_accuracy_vs_frozen_and_W0", "zero_promotions_is_adaptation_success": false},
+  "later_action_study": {"ids": ["A0", "A1", "A2"], "actions_lr_factors": [0.0, 0.0625, 0.25], "decision_every_arrivals": 256, "random_exploration_fraction": 0.1, "paired_shadow_window_fraction": 0.1, "predict_before_observe_before_fit": true, "untried_action_outcome": null, "downside_criterion": "development_calibrated_then_frozen"},
+  "minimum_free_gib": 2.0,
+  "launch_training": false
+}

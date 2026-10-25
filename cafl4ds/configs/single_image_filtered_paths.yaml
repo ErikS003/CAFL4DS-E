@@ -1,0 +1,47 @@
+start: 576
+stop: 960
+frames_per_clip: 96
+patterns: [DDDDDNNNNN, NNNNNDDDDD, DDNNDDNNDN, NNDDNNDDND, DNDNDNDNDN, NDNDNDNDND]
+trajectory_seeds: [5003, 5009]
+reader_draws: [51011, 51017, 51023]
+reader_steps: 100
+checkpoint_stride: 96
+development_start: 192
+development_views: 3
+development_probabilities: [0.2, 0.6, 1.0]
+validation_histories: [held_fresh_04, held_fresh_05]
+max_validation_admission: 0.6
+soft_accuracy_temperature: 0.05
+rank_weight: 0.25
+variance_weight: 0.25
+assay_seed: 81231
+feature_seed: 81221
+projection_seed: 81211
+clusters: 4
+continuation_horizon: 32
+diagnostics_per_clip: 1
+selection_namespace: filtered-paths-intake-20261022-v1
+stream_namespace: filtered-paths-stream-20261022-v1
+branch_namespace: filtered-paths-views-20261022-v1
+audit_namespace: filtered-paths-audit-20261022-v1
+random_namespace: filtered-paths-random-20261022-v1
+development_namespace: filtered-paths-development-20261022-v1
+new_development_per_cell: 50
+new_evaluation_per_cell: 100
+reserves_per_light: 6
+max_download_mib: 3000
+bootstrap_draws: 4000
+bootstrap_seed: 87237
+regressors:
+  linear:
+    _target_: sklearn.linear_model.Ridge
+    alpha: 10.0
+  nonlinear:
+    _target_: sklearn.ensemble.HistGradientBoostingRegressor
+    learning_rate: 0.05
+    max_iter: 150
+    max_leaf_nodes: 7
+    min_samples_leaf: 10
+    l2_regularization: 10.0
+    early_stopping: false
+    random_state: 87243

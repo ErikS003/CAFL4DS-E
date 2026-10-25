@@ -1,0 +1,6 @@
+# Warmup + cosine-decay LR schedule (multiplier on the optimizer's base LR), stepped once per
+# optimizer step. The run script supplies `optimizer=` and `total_steps=` (epochs * batches).
+# Introduced for P0.2.1: the healthy SimSiam baseline's RankMe re-expands as the LR anneals.
+_target_: cafl4ds.schedule.warmup_cosine_schedule
+warmup_frac: 0.1
+min_lr_frac: 0.0

@@ -1,0 +1,23 @@
+controller:
+  _target_: cafl4ds.natural_health_rate.NaturalHealthRate
+  threshold: 0.1
+  patience: 2
+  ramp_arrivals: 32
+  reference_step: 132
+  interval: 8
+seed: 5003
+draws: [61001, 61007, 61013]
+max_batches: 4096
+max_clips: 256
+minimum_batches: 2048
+rate_hz: 16
+network_budget_gib: 8
+archive_index: outputs/temporal-bdd/20261011-intake/archive_index.json
+bdd_root: C:/CAFL-E/datasets/bdd100k
+prior: outputs/dnd-health-rate/20261016-development
+evaluation: outputs/target-precision-budget/20261015-gpu
+intake: outputs/natural-health-rate/20261016-intake
+frames: outputs/natural-health-rate/20261016-frames
+output: outputs/natural-health-rate/20261016-development
+notebook: notebooks/sums/22_natural_health_rate.ipynb
+arms: [full, adaptive, quarter, paced]

@@ -1,0 +1,11 @@
+monitor:
+  _target_: cafl4ds.functional_retention.FunctionalRetention
+  penalty: 1.0
+reference_encoder:
+  _target_: cafl4ds.dino_vehicle.DINOEncoder
+reference_checkpoint: outputs/checkpoints/dino_deitsmall16_pretrain_full_checkpoint.pth
+teacher_penalty: 1.0
+prediction_penalty: 10.0
+folds: 4
+threshold_pp: 1.0
+output: outputs/functional-retention/20261014-cached

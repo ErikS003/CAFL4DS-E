@@ -1,0 +1,22 @@
+study:
+  _target_: cafl4ds.anchor_horizon.AnchorHorizonStudy
+  gain_scale_pp: 0.5
+  minimum_gain_pp: 0.25
+  domain_budget_pp: 1.0
+  rank_ratio_floor: 0.6
+  variance_ratio_floor: 0.5
+  precision_half_width_pp: 0.25
+  required_precision_fraction: 0.8
+horizons: [1, 8, 32]
+slots: [0, 16]
+parent_step: 128
+sources: 6
+panels: 12
+workers: 4
+bootstrap_repetitions: 2000
+bootstrap_seed: 75601
+source: outputs/night-health-confirmation/20261015-gpu
+frames: outputs/night-health-confirmation/20261015-frames
+precision: outputs/target-precision-budget/20261015-gpu
+reference: outputs/functional-retention/20261014-cached
+output: outputs/anchor-horizon/20261015-pilot

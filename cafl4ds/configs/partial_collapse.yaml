@@ -1,0 +1,72 @@
+# Phase-0 partial-collapse dose-response (P0.2.5) — the collapse suite's MIDDLE scale.
+#
+# Every P0.2.x calibration drives SimSiam to a mathematically-forced trivial optimum (the
+# "boiling water" end). None checks whether the instruments read a graded scale IN BETWEEN —
+# the incipient/gradual degradation Phase-1 early-warning actually needs. P0.2.5 builds a
+# partial-collapse continuum and reads the projector detectors along it (C1: monotone in
+# severity?), tracks whether projector geometry predicts backbone probe accuracy (C2), and
+# surfaces the probe-accuracy contrast as an independent "is healthy actually useful" anchor (C4).
+#
+# TWO knobs slide from healthy to collapsed by MECHANISTICALLY DISTINCT paths, so agreement
+# between them is a genuine robustness test (not redundancy):
+#   * blend  — loss-blend `collapse_alpha`: interpolates the WHOLE objective between the two
+#              calibrated poles (alpha=0 healthy, alpha=1 = exact forced-collapse objective).
+#   * softsg — soft stop-gradient `stopgrad_beta`: weakens ONLY the essential mechanism
+#              (predictor stays on; beta=1 healthy, beta=0 no stop-gradient).
+# `severity` s in [0,1] maps: blend alpha=s ; softsg beta=1-s. Both start at the SAME healthy
+# pole and end at (mechanistically different) collapsed poles.
+#
+# Runs the P0.2.1 CERTIFIED corner (IID x 40ep, widened predictor) — the regime where RankMe@proj
+# is known to separate — so "can't read the middle" is never confounded with "can't read at all".
+# Probes are ON (C2/C4 need downstream accuracy). One session runs the whole severity ladder from
+# an identical init (seed reset per rung), so the ladder is a clean within-seed trajectory.
+#
+#   uv run python scripts/partial_collapse.py sweep.knob=blend seed=0
+#   uv run python scripts/partial_collapse.py sweep.knob=softsg seed=0
+#   (fast network-free smoke: append `data=synthetic img_size=16 epochs=6 \
+#     stream.support_per_class=8 stream.query_per_class=8 stream.era_eval_per_class=5`)
+#   (on the Gaudi HPU, inside the container — see docs/developing.md:
+#     ./scripts/run_gaudi_dev.sh -m /mnt/stl10 gaudi-env-cafl4ds:latest 0 \
+#       python scripts/partial_collapse.py sweep.knob=blend seed=0 device=hpu)
+defaults:
+  - encoder: tiny # SAME tiny ViT as P0.1/P0.2 — no capacity scale-up
+  - ssl: simsiam # the point-collapse vehicle (the knobs live on SimSiam)
+  - data: stl10 # data source: stl10 | synthetic
+  - stream: iid # the certified reference ordering (correlation is Phase 1)
+  - filter: accept_all # B-floor (no selection) — isolate the SSL config
+  - monitor: default
+  - optim: adamw
+  - schedule: warmup_cosine
+  - _self_
+
+# The partial-collapse continuum. `knob` picks which mechanism weakens; `severities` is the ladder
+# (endpoints reproduce the two calibrated poles as anchors, the interior probes the middle).
+sweep:
+  knob: blend # blend (loss-blend collapse_alpha) | softsg (soft stop-gradient stopgrad_beta)
+  severities: [0.0, 0.25, 0.5, 0.75, 1.0]
+
+# Certified P0.2.1 healthy corner (widened predictor — SimSiam's anti-collapse mechanism, lifted
+# from the marginal default so the healthy pole is cleanly separated). Byte-identical to the
+# positive control's healthy arm at severity 0.
+ssl:
+  pred_hidden: 128
+
+img_size: 32
+batch_size: 128
+seed: 0
+device: cpu
+epochs: 40 # the horizon a healthy SimSiam needs to reach its stable non-collapsed regime
+eval_every_epochs: 5 # probes are expensive; the ladder reads FINAL geometry/accuracy, so thin the cadence
+
+data_root: /mnt/stl10
+max_per_class: null
+max_train_per_class: null
+
+# Same held-out probe sizing as the positive control (stable RankMe estimate + probe accuracy).
+stream:
+  support_per_class: 40
+  query_per_class: 50
+  era_eval_per_class: 10
+
+# Run logs: one JSONL per rung + the combined comparison (ladder + monotonicity), in the run dir.
+run_log: run_log.jsonl

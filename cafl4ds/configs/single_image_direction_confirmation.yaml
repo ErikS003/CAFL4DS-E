@@ -1,0 +1,33 @@
+batch_size: 1
+trajectory_seeds:
+- 5003
+- 5009
+- 5011
+patterns:
+- DNDNDNDNDNDN
+- NDNDNDNDNDND
+- DDDNNNDDDNNN
+- NNNDDDNNNDDD
+- DDDDDDNNNDDD
+- NNNNNNDDDNNN
+frames_per_clip: 96
+selection_namespace: singleton-direction-confirm-20261021-v1
+view_seed_namespace: singleton-direction-confirm-views-20261021-v1
+stream_seed_namespace: singleton-direction-confirm-stream-20261021-v1
+projection_seed: 81211
+feature_seed: 81221
+assay_seed: 81231
+origin_start: 480
+origin_stop: 1088
+origin_stride: 32
+prefix_end: 512
+test_start: 576
+views: 6
+trees: 128
+tree_depth: 6
+tree_min_leaf: 5
+model_seed: 84631
+bootstrap_seed: 84833
+bootstrap_draws: 4000
+max_download_mib: 2048
+reserves_per_light: 6

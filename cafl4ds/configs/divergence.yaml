@@ -1,0 +1,41 @@
+# Arm-alignment divergence measurement (P1.0.1) — certifies the Phase-0 same-seed `zip` against the
+# shared-iterator oracle (Option A) and owns the number (the divergence magnitude), split into its
+# stream-construction and in-arm-RNG contributors. One fixed C x I arm is run four ways; see
+# scripts/measure_divergence.py.
+#
+# The 2x2 C x I STL-10 certification, as a multirun:
+#   uv run python scripts/measure_divergence.py -m ssl=mae,simsiam init=from_scratch,pretrained
+# Fastest network-free run: append `data=synthetic img_size=16`.
+defaults:
+  - encoder: tiny
+  - ssl: mae # C factor: mae | simsiam
+  - data: stl10 # data source: stl10 | synthetic
+  - stream: class_blocked # F factor: class_blocked | iid
+  - filter: accept_all # A factor: the selection knob (stock knobs)
+  - monitor: default
+  - optim: adamw
+  - init: from_scratch # I factor: from_scratch | pretrained
+  - _self_
+
+# Shared scalars (interpolated into the groups above).
+img_size: 32
+batch_size: 32
+seed: 0
+device: cpu
+eval_every: 5
+
+# Data sizing (kept small for CPU; raise for the HPU runs).
+data_root: /mnt/stl10 # shared STL-10 (torchvision layout); override for a local copy
+max_per_class: 120 # cap images loaded per class from the source
+max_train_per_class: 80 # cap training images per class after held-out reservations
+
+# Warm-start checkpoints (I=pretrained). Resolved to an absolute path by the run script.
+pretrain_dir: outputs/pretrain
+
+# The in-arm desync control: RNG values burned after init so the second arm's in-arm draws
+# (augmentation / MAE masking / dropout) desync while the data stays pinned to the oracle buffer.
+# Any positive count exercises the lever; one draw is enough to shift the augmentation/mask sequence.
+desync_draws: 1
+
+# Report written into the Hydra run dir.
+report: divergence.json

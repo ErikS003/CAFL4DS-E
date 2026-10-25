@@ -1,0 +1,18 @@
+# Fresh-seed confirmation; both online scopes are run by the study driver.
+defaults:
+  - adaptation_bdd_no_replay_confirmation
+  - _self_
+
+seeds: [3001, 3011, 3019, 3023, 3037]
+seed_split: last_block_confirmation_20260928
+run_name: bdd_last_block_confirmation
+probe_panel_seeds: [31013, 31019]
+stream:
+  canary_seed: 31001
+  support_per_canary: 100
+  query_per_canary: 500
+  era_query_per_cell: 200
+
+hydra:
+  run:
+    dir: outputs/adaptation-bdd/last-block-confirmation/20260928

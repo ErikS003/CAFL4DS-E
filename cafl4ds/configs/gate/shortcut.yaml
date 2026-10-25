@@ -1,0 +1,63 @@
+# Shortcut / stable-loss representation-degradation gate (P0.5.0 / P0.5.1).
+#
+# The gate certifies the MODE was INDUCED — it is deliberately NOT the study's deliverable. The
+# deliverable is the reader verdict (does any label-free reader track the crater?), which is
+# REPORTED either way: a fire and a clean null are both legitimate results, so the reader never
+# blocks `passed`. `passed` reads only the four mode-induction conditions below.
+#
+# The mode is a representation that is FULL-RANK BUT USELESS, and this is DEFINED by the dissociation:
+# the cheap online signals (loss, RankMe) read healthy while the frozen probe falls. REFRAMED success
+# (P0.5.2): the goal is a REAL, *full-rank* degradation — NOT a near-chance crater. Keeping RankMe high
+# matters MORE than crater depth: a deeper crater bought by collapsing the rank is not this mode induced
+# harder, it is a leak into P0.2 collapse (which RankMe already catches). So the RankMe precondition is
+# the PRIMARY check (tightened below), the magnitude bar is modest, and the rigor moves to RELIABILITY
+# (seed-robust, min-across-N) + reader two-sidedness (fire on the degradation, quiet on a healthy/healthy
+# null). The loss is the ANTI-instrument — it must NOT rise on the bad arm (the loss lies).
+#
+# Thresholds are toy-scale and illustrative; the portable result is the fire/quiet VERDICT and the
+# direction, not the magnitudes. The magnitude floors are PROVISIONAL — calibrate against the N-seed
+# probe-noise floor.
+mode: shortcut
+
+# (1, PRIMARY — the defining check) Full-rank precondition: the shortcut rep is full-rank, NOT collapsed —
+#     its backbone RankMe stays at least this fraction of the healthy arm's (≈1.0 = preserved; a large drop
+#     => collapse, out of scope). TIGHTENED to 0.85 under the reframe (was 0.70): strong full rank is the
+#     whole claim.
+precondition_rankme_frac: 0.85
+
+# (1) Probe degradation — the ground-truth quality read (frozen probe) must fall on the shortcut arm
+#     while the healthy arm clears real headroom above chance. Under the reframe this is a REAL,
+#     seed-robust degradation (min-across-N beyond probe noise), NOT a drive toward chance.
+healthy_probe_min: 0.30 # healthy probe accuracy floor (real headroom; escalate scale until met)
+
+# Warm-up-confound guard (P0.3.9), REPORTED not gated. The pretrained vehicle splices a fresh decoder,
+# so the encoder dips at the start of the continue even on the same data. The healthy arm should
+# RECOVER to the pristine well's probe by the tail; `healthy_recovers_baseline` flags whether it came
+# back within this margin (kNN units). A healthy_final that does NOT recover means a low value is
+# warm-up damage (or an incompetent well), not real headroom — read the crater with that caveat.
+recovery_margin: 0.05
+min_probe_gap: 0.05 # healthy_probe - shortcut_probe (a REAL, seed-robust drop — provisional, calibrate vs N-seed noise)
+
+# (4) Contrast — the separation rests on the lever's difference, not an absolute bar.
+min_probe_ratio: 1.15 # healthy_probe / shortcut_probe (provisional; the reframe leans on RankMe + reliability, not magnitude)
+
+# (3) Loss does not alarm — the shortcut arm's recon-loss floor must not exceed the healthy arm's
+#     by more than this (it "lies": stays low/healthy-looking on the bad rep). For the mask-ratio
+#     lever the shortcut loss is *lower* (easier task), so this passes with room — read it within
+#     the shortcut arm (P0.5.0 caveat); the apples-to-apples cross-arm form is P0.5.1.
+loss_alarm_margin: 0.02
+
+# (2, REPORTED not gated) Reader verdict — a candidate label-free reader "fires" if the shortcut
+#     arm is worse (in that reader's own degradation direction) past its threshold. `reader_min_gap`
+#     is the default; `reader_min_gaps` overrides per reader because the readers live on very
+#     different scales (silhouette in [-1,1]; attention distance in patch units; uniformity in nats).
+#     All illustrative/toy-scale — the portable result is the fire/quiet VERDICT and direction, not
+#     the magnitudes; tune after the de-risking scout. Readers: uniformity/alignment/alignment_strong
+#     climb when worse (+); clusterability/attn_distance drop when worse (the sign is handled in code).
+reader_min_gap: 0.20
+reader_min_gaps:
+  uniformity: 0.20 # nats (P0.2 carry-in — expected blind on MAE)
+  alignment: 0.20 # squared hypersphere distance (P0.2 carry-in)
+  alignment_strong: 0.05 # squared hypersphere distance under a stronger augment (P0.5.2)
+  clusterability: 0.05 # silhouette drop, shortcut below healthy (P0.5.2)
+  attn_distance: 0.50 # patch-grid units, shortcut heads more local than healthy (P0.5.2)

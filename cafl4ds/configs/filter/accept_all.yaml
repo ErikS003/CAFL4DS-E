@@ -1,0 +1,2 @@
+# A = B-floor: accept every batch, no replay, raw order. The only knob in Phase 0.
+_target_: cafl4ds.filters.accept_all.AcceptAll

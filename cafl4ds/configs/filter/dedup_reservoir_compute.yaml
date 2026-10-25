@@ -1,0 +1,12 @@
+# Compute-matched B1.5: calibrated within-batch SemDeDup admission followed by reservoir replay.
+# threshold=0.998 retained about 75.5% on untouched initial-encoder BDD diagnostic seeds.
+_target_: cafl4ds.filters.composite.CompositeSelector
+admission:
+  - _target_: cafl4ds.filters.dedup.SemDeDup
+    threshold: 0.998
+buffer:
+  _target_: cafl4ds.filters.reservoir.ReservoirReplay
+  capacity: 256
+  replay_batch: 16
+  max_train_batch: ${batch_size}
+  seed: ${seed}

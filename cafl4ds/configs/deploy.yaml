@@ -1,0 +1,71 @@
+# P1.0.2 deployment-prototype de-risker harness. Streams a configurable BDD driving diet through a
+# config-selected backbone and logs a Phase-0-informed multivariate health signal (label-free +
+# labelled-canary channels, trust-annotated). Engineering only — it reads no degradation.
+#
+# Tier-A wiring check (fresh clone, no dataset needed):
+#   uv run python scripts/run_deploy_harness.py data=attr_synthetic img_size=32 eval_every=3
+# The default BDD diet, joint-embedding backbone:
+#   uv run python scripts/run_deploy_harness.py data=bdd bdd_root=/abs/path/to/bdd backbone=je
+# MAE backbone, downscaled for a low-memory box, gate arms off:
+#   uv run python scripts/run_deploy_harness.py data=bdd bdd_root=/abs/path backbone=mae img_size=128 gate_arms=false
+defaults:
+  - encoder: tiny
+  - backbone: je # backbone family: mae | je (selects ssl + monitor + trust family)
+  - data: attr_synthetic # attribute source: attr_synthetic | bdd
+  - stream: regime
+  - filter: accept_all
+  - optim: adamw
+  - init: from_scratch
+  - pc: collapse # the manufactured-pathology gate arm (used iff gate_arms=true)
+  - _self_
+
+# Shared scalars (interpolated into the groups above).
+img_size: 32
+batch_size: 32
+seed: 0
+device: cpu
+eval_every: 1 # dense checkpointing — a health reading per batch, for temporal resolution
+
+# The seed ensemble — one trajectory per seed (null falls back to the single `seed`). The corpus is
+# the union; event-relative coordinates (see cafl4ds/deploy_corpus.py) make the trajectories comparable.
+seeds: null
+
+# The warm well (a full-method checkpoint from scripts/warm_well.py). null = cold drive (from scratch);
+# a path = warm drive resuming the competent well intact. The configurable warm-start pointer.
+well: null
+
+# BDD sizing (data=bdd). bdd_root points at the canonical download; max_images caps the load.
+bdd_root: /mnt/bdd100k
+max_images: null
+max_train_per_regime: null
+
+# Co-log the PC/B5 gate arms. Default false — the hand-off case: the corpus stays the live backbone
+# only, and a BDD drive decodes the source once (gate arms would each build another stream). Flip to
+# true to co-log the manufactured-collapse PC and the frozen B5 floor beside the live arm.
+gate_arms: false
+
+# The manufactured-collapse gate thresholds (used iff gate_arms=true).
+gate:
+  pc_loss_floor_max: -0.3
+  pc_rankme_drop_frac: 0.6
+
+# Tier-B sanity-of-readings thresholds — the reproducible plausibility floor (see cafl4ds/deploy.py
+# tier_b_report). Loose by design: floors on aggregates, not a per-checkpoint gate, so a healthy
+# near-stationary warm drive does not flap. Downstream studies tighten these as their diets bite.
+tier_b:
+  rankme_lo: 0.5 # RankMe must stay above near-collapse ...
+  rankme_hi: 1000.0 # ... and stay bounded (not blown up)
+  min_final_drift: 0.0 # representation drift must accumulate off zero
+  canary_margin: 0.0 # the mean canary must clear chance (1/#scenes) by at least this
+
+# Log/un-log lever: null logs every emitted signal; a list restricts to those (bookkeeping kept).
+log_signals: null
+
+# Tier-A flat-memory (leak) check: repeat the live arm over the diet and confirm memory stays flat.
+long_horizon: false
+long_horizon_passes: 4
+long_horizon_growth_frac_max: 0.10
+
+# The corpus (health.csv/parquet + segments/trust/manifest) and per-seed reports land in the Hydra
+# run dir under corpus/ and reports/ respectively.
+run_name: null # defaults to "<backbone>_deploy" in the run script

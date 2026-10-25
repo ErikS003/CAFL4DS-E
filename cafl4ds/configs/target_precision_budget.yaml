@@ -1,0 +1,18 @@
+measurement:
+  _target_: cafl4ds.target_alignment_measurement.TargetAlignmentMeasurement
+  support_half_width_pp: 0.5
+  crossed_half_width_pp: 1.0
+  required_fraction: 0.8
+planner:
+  _target_: cafl4ds.target_precision_budget.PrecisionBudgetPlanner
+  candidates: [48, 96, 144, 192, 256]
+  repetitions: 1000
+  seed: 62501
+interim_panels: 64
+final_panels: 256
+new_seed_start: 62001
+bootstrap_repetitions: 2000
+bootstrap_seed: 62551
+source: outputs/target-alignment-measurement/20261015-gpu
+preflight: outputs/target-precision-budget/20261015-preflight
+output: outputs/target-precision-budget/20261015-gpu

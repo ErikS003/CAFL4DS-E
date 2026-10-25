@@ -1,0 +1,18 @@
+source: outputs/single-image-filter-factorial/20261021-probe-feature
+start: 576
+offered: 19200
+frames_per_clip: 96
+checkpoint_stride: 384
+trajectory_seeds: [5003, 5009]
+threshold_factors: [1.0, 0.5, 0.0]
+independent_probabilities: [0.1, 0.25, 0.5]
+bootstrap_draws: 4000
+bootstrap_seed: 90237
+minimum_free_gib: 2.0
+random_namespace: extended-gate-independent-20261023-v1
+global_namespace: extended-gate-global-budget-20261023-v1
+clip_namespace: extended-gate-clip-budget-20261023-v1
+selection_namespace: extended-gate-new-clips-20261023-v1
+reserves_per_light: 60
+max_download_gib: 32
+download_attempts: 4

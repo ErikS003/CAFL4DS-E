@@ -1,0 +1,11 @@
+study:
+  _target_: cafl4ds.preaction_stopping.PreactionStopping
+  penalty: 10.0
+  sham_count: 32
+  sham_seed: 91601
+outcomes: outputs/cumulative-budget/20261015-exploratory
+health: outputs/h8-health-information/20261015-development
+guard: outputs/fresh-functional-guard/20261014-gpu
+reference: outputs/functional-retention/20261014-cached
+output: outputs/preaction-stopping/20261016-development
+sources: [fresh_00, fresh_01, fresh_02, fresh_03, fresh_04, fresh_05]

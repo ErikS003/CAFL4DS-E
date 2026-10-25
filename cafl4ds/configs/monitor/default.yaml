@@ -1,0 +1,10 @@
+# The health monitor (thermometer). Reads the instruments on the fixed held-out probe set.
+# `eval_sets` is supplied by the run script from the stream. Labels enter the probes ONLY.
+_target_: cafl4ds.monitor.HealthMonitor
+knn_k: 20
+run_knn: true
+run_linear: true
+# Alignment needs a positive pair; auto-skipped for single-view methods (MAE). The pair is a
+# fixed, deterministic draw (align_seed) reused across checkpoints (P0.2.2).
+run_alignment: true
+align_seed: 0

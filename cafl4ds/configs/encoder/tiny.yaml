@@ -1,0 +1,10 @@
+# Tiny ViT backbone shared by both SSL methods. CPU-friendly by default; scale
+# embed_dim / depth (and img_size at the top level) for the HPU runs.
+_target_: cafl4ds.models.vit.TinyViTEncoder
+img_size: ${img_size}
+patch_size: 8
+in_chans: 3
+embed_dim: 96
+depth: 4
+num_heads: 3
+mlp_ratio: 2.0

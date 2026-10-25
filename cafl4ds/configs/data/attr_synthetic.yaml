@@ -1,0 +1,12 @@
+# Network-free attributed images (two axes: era-key regime + canary) for the Tier-A wiring check
+# and unit tests — lets the whole deployment rig run from a fresh clone with no dataset.
+_target_: cafl4ds.data.attributes.SyntheticAttributeSource
+num_regimes: 4
+num_canary_classes: 4
+per_cell: 24
+img_size: ${img_size}
+channels: 3
+noise: 0.3
+regime_tint: 0.15
+long_tail: true
+seed: ${seed}

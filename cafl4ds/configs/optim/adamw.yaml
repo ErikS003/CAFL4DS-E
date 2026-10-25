@@ -1,0 +1,4 @@
+# Optimizer over the SSL method's parameters (the run script passes `params=`).
+_target_: torch.optim.AdamW
+lr: 1.0e-3
+weight_decay: 0.05

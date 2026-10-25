@@ -1,0 +1,9 @@
+# A = B1: reservoir sampling (Vitter Algorithm R) + experience replay. No admission narrowing
+# — every incoming frame is trained on, plus a random replay draw from the uniform buffer.
+_target_: cafl4ds.filters.composite.CompositeSelector
+admission: []
+buffer:
+  _target_: cafl4ds.filters.reservoir.ReservoirReplay
+  capacity: 256
+  replay_batch: ${batch_size}
+  seed: ${seed}

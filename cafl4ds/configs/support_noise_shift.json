@@ -1,0 +1,22 @@
+{
+  "source_geometry": "outputs/geometry-interpretation/20261020",
+  "source_fitting": "outputs/conditioning-fitting/20261020",
+  "source_selection": "outputs/support-regularization/20261020",
+  "source_evaluation": "outputs/early-state-adaptation/20261019/evaluation",
+  "output": "outputs/support-noise-shift/20261020",
+  "notebook": "notebooks/sums/47_support_noise_shift.ipynb",
+  "points": 99,
+  "development_points": 27,
+  "transfer_points": 72,
+  "budgets": [32, 64, 128],
+  "lambdas": [0.0001, 0.001, 0.01, 0.1],
+  "draws": [61001, 61007, 61013, 61019, 61027, 61031],
+  "cv_partitions": 2,
+  "cv_folds": 4,
+  "collection_cv_fits": 114048,
+  "collection_full_fits": 10296,
+  "repeat_audits": 198,
+  "independent_audits": 198,
+  "minimum_free_mib": 1536,
+  "max_output_mib": 512
+}

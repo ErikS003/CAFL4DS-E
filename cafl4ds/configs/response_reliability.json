@@ -1,0 +1,22 @@
+{
+  "output": "outputs/response-reliability/20261020",
+  "notebook": "notebooks/sums/53_response_reliability.ipynb",
+  "previous": "outputs/functional-response-profile/20261020",
+  "profiles": "outputs/functional-health-profile/20261020",
+  "outcomes": "outputs/preaction-benefit/20261019",
+  "geometry": "outputs/geometry-interpretation/20261020",
+  "batches": [119, 123, 127],
+  "mask_offsets": [195200, 195300, 195400],
+  "magnitude": 0.5,
+  "audit_batch": 1,
+  "audit_mask": 1,
+  "reconstruction_SSL": 9216,
+  "proposal_SSL": 1296,
+  "repeat_SSL": 144,
+  "maximum_SSL": 10656,
+  "encoder_passes": 2736,
+  "image_forwards": 612864,
+  "forecast_ridge_fits": 7308,
+  "minimum_free_mib": 1536,
+  "max_output_mib": 512
+}

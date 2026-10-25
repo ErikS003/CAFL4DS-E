@@ -1,0 +1,13 @@
+audit:
+  _target_: cafl4ds.health_harm_audit.HealthHarmAudit
+  health_budget: 0.05
+  minimum_gap: 0.25
+  material_harm_pp: 1.0
+  epsilon_pp: 1.0e-8
+monitor:
+  _target_: cafl4ds.functional_retention.FunctionalRetention
+  penalty: 1.0
+landmarks: [0, 4, 8, 16, 32]
+permutation_seed: 73123
+source: outputs/fresh-functional-guard/20261014-gpu
+output: outputs/health-harm-audit/20261014-cached

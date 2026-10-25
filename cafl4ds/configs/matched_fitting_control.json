@@ -1,0 +1,12 @@
+{
+  "source": "outputs/early-state-adaptation/20261019",
+  "diagnostic": "outputs/early-state-night-diagnostic/20261019",
+  "output": "outputs/matched-fitting-control/20261019",
+  "notebook": "notebooks/sums/41_matched_fitting_control.ipynb",
+  "minimum_free_mib": 768,
+  "max_output_mib": 64,
+  "collection_fits": 324,
+  "verification_fits": 54,
+  "bootstrap_draws": 2000,
+  "bootstrap_seed": 194041
+}

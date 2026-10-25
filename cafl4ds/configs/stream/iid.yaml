@@ -1,0 +1,11 @@
+# Shuffled single-pass ordering (one era). The well-behaved reference used to produce the
+# I=pretrained warm-start checkpoint — correlation must NOT leak into the clean start.
+_target_: cafl4ds.data.streams.EraStream
+source: ${data}
+order: iid
+batch_size: ${batch_size}
+support_per_class: 20
+query_per_class: 20
+era_eval_per_class: 10
+max_train_per_class: ${max_train_per_class}
+seed: ${seed}

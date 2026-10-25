@@ -1,0 +1,70 @@
+# Phase-0 false-positive stress (P0.2.4) — the QUIET-SIDE calibration.
+#
+# Everything P0.2/P0.2.1/P0.2.2/P0.2.3 varies is how a forced-collapse (PC) arm SEPARATES from a
+# healthy arm; the healthy arm is always a well-behaved SimSiam, so the suite's FALSE-POSITIVE rate
+# is untested. P0.2.4 turns the calibration around: NO PC arm. Two HEALTHY arms (anti_collapse=true)
+# run in one session — a canonical-healthy REFERENCE (this base config) and an atypical-healthy TEST
+# (base + the selected `stressor.overrides`, applied to the test arm only). A false fire = the
+# atypical arm separates from the reference in the collapse direction past its bar; the run PASSES
+# iff NOTHING fires (the quiet side holds). See docs/experiments/phase0/P0.2.4.md.
+#
+#   uv run python scripts/false_positive_stress.py stressor=low_diversity
+#   (stressors: low_diversity | heavy_aug | undertrained; probes off => cheap:
+#     append `monitor.run_knn=false monitor.run_linear=false`)
+defaults:
+  - encoder: tiny # SAME tiny ViT as the positive control
+  - ssl: simsiam # the healthy vehicle (both arms anti_collapse=true)
+  - data: stl10
+  - stream: iid # the canonical reference ordering
+  - filter: accept_all
+  - monitor: default
+  - optim: adamw
+  - schedule: warmup_cosine
+  - stressor: low_diversity # the atypical-but-healthy perturbation (TEST arm only)
+  - _self_
+
+# The certified healthy config from `positive_control.yaml` (widened predictor). The reference arm
+# is byte-identical to the positive control's healthy arm, so its readings are directly comparable.
+ssl:
+  pred_hidden: 128
+
+img_size: 32
+batch_size: 128
+seed: 0
+device: cpu
+epochs: 40
+eval_every_epochs: 1
+data_root: /mnt/stl10
+max_per_class: null
+max_train_per_class: null
+
+# Same held-out probe sizing as the positive control (stable RankMe estimate).
+stream:
+  support_per_class: 40
+  query_per_class: 50
+  era_eval_per_class: 10
+
+# Fire bars for the (inverted) quiet verdict — the SAME bars as P0.2.2's envelope. A false fire is
+# a standalone instrument separating past these; the run passes iff none does.
+fire_ratio: 2.0
+fire_gap: 0.5
+
+# Ablation — Option B: matched collapse-pole per regime (P0.2.4). When true, a THIRD arm runs — a
+# forced-collapse arm (anti_collapse=false) in the SAME stressed regime as the atypical arm. It
+# disambiguates Option A's apparent false fires: because the collapse pole and the atypical arm
+# share the identical stressed eval set, the low-diversity eval-set-cap confound cancels. Two
+# readouts are added — in-regime discrimination `metric_envelope(collapse_in_regime, atypical)`
+# (does true collapse still separate from atypical-healthy within the regime?) and the atypical
+# arm's position on the [collapse-pole, canonical-healthy] axis (pos>0.5 => nearer the healthy
+# pole). Default false keeps the Option A run byte-identical.
+collapse_pole: false
+
+# A2 (matched-class era-evaluation) — the fix for the low-diversity RankMe false fire. When true,
+# the canonical reference arm is *evaluated* on the same few-class subset the atypical arm sees
+# (`stressor.overrides.stream.class_order`), so the effective-rank cap is matched across arms and
+# the eval-set-artifact false fire cancels. A no-op when the stressor does not subset classes
+# (heavy_aug / undertrained stay 10-class). Off by default: leaves the Option-A run byte-identical.
+match_eval_classes: false
+
+# Run logs: one JSONL per arm + the combined comparison, in the Hydra run dir.
+run_log: run_log.jsonl

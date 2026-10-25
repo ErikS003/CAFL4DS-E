@@ -1,0 +1,17 @@
+# Point-collapse gate (P0.2.1) — the default positive-control pass criterion.
+#
+# A numeric pass criterion (a gate, not an eyeball read) — see docs/experiments/phase0/P0.2.1.md.
+# P0.2.1 REDESIGNED the gate. Two changes from P0.2, both driven by what the runs do:
+#   1. Gate on RANKME SEPARATION, not loss. In this regime BOTH arms reach loss ~-0.9 (a low
+#      cosine loss is compatible with a healthy SimSiam), so the loss no longer discriminates —
+#      the inverse of P0.2's toy-horizon finding. RankMe is now the discriminator (~5.8 vs ~1.9).
+#   2. DROP the "healthy >= 60% of its own random-init RankMe" criterion. Random init is diffuse
+#      / inflated (RankMe ~10.8); healthy SSL legitimately sheds that before re-expanding to ~5.8
+#      (~53% of init), so "hold near init" is the wrong reference. Gate healthy on an ABSOLUTE
+#      floor well above the collapse floor instead.
+# The PC's loss floor is kept only as the "right reason" fingerprint (it still rides to -1).
+mode: point_collapse
+pc_rankme_drop_frac: 0.35 # PC final RankMe <= this fraction of its own init (measured ~0.18)
+pc_loss_floor: -0.9 # "right reason": PC loss (min over steps) rides to its -1 constant-solution floor
+healthy_rankme_min: 4.0 # intact control final RankMe must clear this (measured ~5.4-5.7; floor ~1.9)
+min_rankme_ratio: 2.0 # required (healthy final RankMe) / (PC final RankMe); measured ~2.9x

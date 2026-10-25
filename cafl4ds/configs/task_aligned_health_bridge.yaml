@@ -1,0 +1,19 @@
+study:
+  _target_: cafl4ds.task_aligned_health_bridge.HealthCapabilityBridge
+  penalty: 10.0
+  minimum_reduction: 0.10
+  maximum_rmse_pp: 1.0
+  maximum_bias_pp: 0.5
+monitor:
+  _target_: cafl4ds.functional_retention.FunctionalRetention
+  penalty: 1.0
+reference_draws: 32
+permutation_seed: 73123
+within_permutation_seeds: [73601, 73602, 73603, 73604, 73605, 73606, 73607, 73608, 73609, 73610, 73611, 73612, 73613, 73614, 73615, 73616, 73617, 73618, 73619, 73620]
+minimum_gap: 0.25
+observable_fraction: 0.8
+precision: outputs/target-precision-budget/20261015-gpu
+states: outputs/target-alignment-measurement/20261015-gpu
+guard: outputs/fresh-functional-guard/20261014-gpu
+reference: outputs/functional-retention/20261014-cached
+output: outputs/task-aligned-health-bridge/20261015-gpu

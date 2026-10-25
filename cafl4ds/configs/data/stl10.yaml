@@ -1,0 +1,7 @@
+# The real STL-10 labeled split (resized tiny). Labels carried only for ordering + eval.
+# Download once: torchvision.datasets.STL10(root=..., split=..., download=True).
+_target_: cafl4ds.data.sources.STL10Source
+root: ${data_root}
+split: train
+img_size: ${img_size}
+max_per_class: ${max_per_class}

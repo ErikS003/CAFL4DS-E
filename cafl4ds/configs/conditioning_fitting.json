@@ -1,0 +1,17 @@
+{
+  "source_geometry": "outputs/geometry-interpretation/20261020",
+  "source_evaluation": "outputs/early-state-adaptation/20261019/evaluation",
+  "output": "outputs/conditioning-fitting/20261020",
+  "notebook": "notebooks/sums/45_conditioning_fitting.ipynb",
+  "primary_lambda": 0.01,
+  "sensitivity_lambda": 0.0001,
+  "whitening_relative_ridge": 0.01,
+  "adam_steps": 1000,
+  "adam_lr": 0.001,
+  "minimum_free_mib": 1536,
+  "max_output_mib": 128,
+  "finite_collection_trajectories": 2268,
+  "newton_collection_solutions": 6480,
+  "finite_audit_trajectories": 189,
+  "independent_solver_audits": 54
+}

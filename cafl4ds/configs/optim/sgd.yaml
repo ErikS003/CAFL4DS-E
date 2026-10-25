@@ -1,0 +1,14 @@
+# SGD with momentum — the DIVERGENCE vehicle's optimizer (P0.4.0). The run script passes `params=`.
+#
+# Why SGD and not AdamW here: divergence is a numerical positive-feedback runaway — a too-large step
+# lands in higher curvature -> larger gradient -> larger step -> loss to inf/NaN. Under SGD the step
+# is LR * grad, so the gradient magnitude feeds directly back into the step and the loop is UNDAMPED
+# -> a *gradual* runaway with observable lead time. AdamW normalizes the step (~ LR * grad / sqrt(v)),
+# which DAMPS exactly that loop -> divergence collapses to a knife-edge (instant-NaN or absorbed), with
+# no lead time. SGD is therefore the vehicle that lets the grad-norm instrument lead the loss NaN
+# (the P0.4.0 payoff). Momentum is held FIXED across arms (LR stays the only lever) and, by
+# accumulating the growing gradients, lengthens the observable runaway.
+_target_: torch.optim.SGD
+lr: 1.0
+momentum: 0.9
+weight_decay: 0.0 # kept clean so LR is the sole lever (no decay confound)

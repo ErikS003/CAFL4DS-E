@@ -1,0 +1,18 @@
+{
+  "output": "outputs/accessibility-replication/20261020",
+  "notebook": "notebooks/sums/48_accessibility_replication.ipynb",
+  "geometry": "outputs/geometry-interpretation/20261020",
+  "previous": "outputs/support-noise-shift/20261020",
+  "evaluation": "outputs/early-state-adaptation/20261019/evaluation",
+  "broad_val_source": "outputs/target-precision-budget/20261015-gpu/data-role-manifest.json",
+  "train_metadata": "outputs/natural-health-rate/20261016-intake/metadata.json",
+  "test_per_cell": 256,
+  "points": 99,
+  "collection_fits": 9504,
+  "repeat_audits": 198,
+  "independent_audits": 198,
+  "encoder_passes": 198,
+  "image_forwards": 405504,
+  "minimum_free_mib": 1536,
+  "max_output_mib": 384
+}

@@ -1,0 +1,37 @@
+# P1.0.2 warm-the-well step. Trains a "generally competent" backbone on a stationary all-regime diet
+# until the SSL loss plateaus, then saves the whole method (encoder + head) as a reusable well the
+# deployment drive resumes intact (no fresh-head transient — see cafl4ds/warmup.py). Run once per
+# backbone; point the drive at the result with `well=<path>`.
+#
+#   uv run python scripts/warm_well.py data=bdd bdd_root=/abs/path backbone=je well_out=wells/je_well.pt
+defaults:
+  - encoder: tiny
+  - backbone: je # backbone family: mae | je (selects ssl + monitor + family)
+  - data: attr_synthetic # attribute source: attr_synthetic | bdd
+  - stream: regime
+  - optim: adamw
+  - init: from_scratch
+  - _self_
+
+# Shared scalars (interpolated into the groups above).
+img_size: 32
+batch_size: 32
+seed: 0
+device: cpu
+
+# BDD sizing (data=bdd).
+bdd_root: /mnt/bdd100k
+max_images: null
+max_train_per_regime: null
+
+# The loss-plateau warm-up controls (train until the loss stops improving, or a cap is hit).
+warmup:
+  window: 20 # steps per plateau comparison window
+  tol: 0.001 # relative-improvement floor — below this, the loss has settled
+  min_steps: 40 # minimum steps before a plateau may be declared
+  max_steps: 2000 # hard cap on optimizer steps
+  max_passes: 50 # cap on passes over the stationary pool
+  grad_clip: 1.0
+
+# Where the well is written (resolved to an absolute path against the launch cwd, so it is reusable).
+well_out: wells/${family}_well.pt

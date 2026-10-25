@@ -1,0 +1,63 @@
+# Phase-1 multi-arm harness (P1.0.0) — live / PC / B5 co-logged into one canonical
+# comparison.json. Consolidates the scattered Phase-0 pieces (B5 measured only at run-end; a
+# separate positive-control script per mode) into one loop under one schema.
+#
+# The full 2x2 C x I STL-10 smoke (the rig runs, instruments move in the right direction, the PC
+# fires, nothing NaNs):
+#   uv run python scripts/run_harness.py -m ssl=mae,simsiam init=from_scratch,pretrained
+# Network-free gate-checked smoke: use `--config-name harness_smoke`.
+# The long-horizon leak check (resampled-image stream, extended horizon):
+#   uv run python scripts/run_harness.py data=synthetic long_horizon=true
+defaults:
+  - encoder: tiny
+  - ssl: mae # C factor: mae | simsiam (the live + B5 arms)
+  - data: stl10 # data source: stl10 | synthetic
+  - stream: class_blocked # F factor: class_blocked | iid
+  - filter: accept_all # A factor: B-floor / reservoir / dedup / loss (stock knobs)
+  - monitor: default
+  - optim: adamw
+  - init: from_scratch # I factor: from_scratch | pretrained
+  - pc: collapse # the manufactured-pathology PC arm
+  - _self_
+
+# Shared scalars (interpolated into the groups above).
+img_size: 32
+batch_size: 32
+seed: 0
+device: cpu
+eval_every: 5
+
+# Data sizing (kept small for CPU; raise for the HPU runs).
+data_root: /mnt/stl10 # shared STL-10 (torchvision layout); override for a local copy
+max_per_class: 120 # cap images loaded per class from the source
+max_train_per_class: 80 # cap training images per class after held-out reservations
+
+# Warm-start checkpoints (I=pretrained). Resolved to an absolute path by the run script.
+pretrain_dir: outputs/pretrain
+
+# Canonical artifact written into the Hydra run dir.
+comparison: comparison.json
+run_name: null # defaults to "<method>_<init>" in the run script
+
+loop:
+  _target_: cafl4ds.loop.StreamingLoop
+  eval_every: ${eval_every}
+  grad_clip: 1.0
+  device: ${device}
+
+# The alignment method for the sequential same-seed arms (Option B, default). `shared_iterator`
+# is the Option A oracle used by P1.0.1; recorded in the artifact header either way.
+alignment: same_seed
+
+# The manufactured-collapse PC gate (toy-horizon fingerprint: loss rides to -1, projector RankMe
+# self-collapses). Robust at the smoke scale; the mode studies bring their own gates.
+gate:
+  pc_loss_floor_max: -0.3 # PC SSL loss floor must ride to/under this (toward the -1 optimum)
+  pc_rankme_drop_frac: 0.6 # PC final/init projector RankMe must drop to <= this (self-collapse)
+
+# The long-horizon no-blow-up / no-leak check: repeat the live arm over a resampled-image stream
+# and confirm it stays finite with flat memory. Off by default (the normal run is the 3-arm smoke).
+long_horizon: false
+long_horizon_passes: 4 # repeated passes over the resampled stream; RSS sampled after each
+long_horizon_growth_frac_max: 0.10 # allowed RSS growth (final vs settled baseline) before it reads as a leak
+long_horizon_per_class: 400 # synthetic images/class for the extended horizon

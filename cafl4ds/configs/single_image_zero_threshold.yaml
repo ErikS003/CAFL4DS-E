@@ -1,0 +1,4 @@
+predecessor: outputs/single-image-covariance-regularization/20261024-pressure-adaptive
+threshold: 0.0
+arm: covariance_regularized_zero_threshold
+poll_seconds: 20

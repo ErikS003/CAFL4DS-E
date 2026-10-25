@@ -1,0 +1,16 @@
+# Targeted retention intervention on the successful clean-warm full-backbone arm. Reservoir replay
+# is compute-matched: the optimizer still sees 32 images per step (16 current + 16 replay once warm),
+# so any retention change is not purchased with a larger training batch.
+defaults:
+  - adaptation_bdd_clean_warm_mae
+  - override filter: reservoir_compute
+  - _self_
+
+train_scope: full
+run_name: bdd_clean_warm_mae_replay_compute
+optim:
+  lr: 1.0e-4
+
+hydra:
+  run:
+    dir: outputs/adaptation-bdd/clean-warm-mae-replay/${now:%Y%m%d-%H%M%S}

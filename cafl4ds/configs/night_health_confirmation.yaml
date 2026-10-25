@@ -1,0 +1,24 @@
+study:
+  _target_: cafl4ds.night_health_confirmation.NightHealthConfirmation
+  penalty: 10.0
+  minimum_reduction: 0.10
+  required_source_wins: 5
+sources: 6
+ssl_seed: 5003
+parents: {day_end: 128, night_end: 256, return_early: 264}
+horizon: 32
+panels: 256
+workers: 4
+bootstrap_repetitions: 2000
+bootstrap_seed: 74551
+maximum_download_mib: 3072
+maximum_replacements: 12
+minimum_free_gib: 3
+pool: outputs/scheduling/20261013-intake/selection.pool.json
+archive_index: outputs/temporal-bdd/20261011-intake/archive_index.json
+development: outputs/task-aligned-health-bridge/20261015-gpu
+precision: outputs/target-precision-budget/20261015-gpu
+reference: outputs/functional-retention/20261014-cached
+intake: outputs/night-health-confirmation/20261015-intake
+frames: outputs/night-health-confirmation/20261015-frames
+output: outputs/night-health-confirmation/20261015-gpu

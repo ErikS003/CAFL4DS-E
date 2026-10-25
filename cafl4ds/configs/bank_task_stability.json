@@ -1,0 +1,14 @@
+{
+  "output": "outputs/bank-task-stability/20261020",
+  "notebook": "notebooks/sums/49_bank_task_stability.ipynb",
+  "geometry": "outputs/geometry-interpretation/20261020",
+  "previous": "outputs/accessibility-replication/20261020",
+  "transitions": 12,
+  "points": 24,
+  "sampling_maps_per_edge": 59,
+  "gauge_maps_per_edge": 18,
+  "total_maps": 924,
+  "fisher_linear_solves": 576,
+  "minimum_free_mib": 1536,
+  "max_output_mib": 256
+}

@@ -1,0 +1,8 @@
+batch_size: 1
+origins: [736, 768, 928, 960]
+candidate_offsets: [0, -16, -64]
+training_draws: [83111, 83117, 83123, 84401, 84407, 84413]
+reader_draws: [51011, 51017, 51023]
+bootstrap_seed: 84431
+bootstrap_draws: 4000
+tie_tolerance: 1.0e-10

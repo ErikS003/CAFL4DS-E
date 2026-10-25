@@ -1,0 +1,17 @@
+prior: outputs/memory-age-replay/20261017-reservoir256
+source: outputs/natural-health-rate/20261016-development
+frames: outputs/natural-health-rate/20261016-frames
+evaluation: outputs/target-precision-budget/20261015-gpu
+output: outputs/reservoir-health-pulse/20261017-development
+notebook: notebooks/sums/30_reservoir_health_pulse.ipynb
+arms: [health, shift_256, shift_512, shift_1024]
+draws: [61001, 61007, 61013]
+loss_seeds: [84211, 84223]
+sample_seed: 73919
+admission_seed: 90101
+capacity: 256
+verification_finetune_points: [256, 4096]
+minimum_free_mib: 768
+max_output_mib: 640
+max_new_ssl_updates: 20480
+max_collection_fits_per_kind: 420

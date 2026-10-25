@@ -1,0 +1,19 @@
+batch_size: 1
+seed: 5003
+frames_per_period: 96
+stream_images: 1152
+prefix_images: 512
+origin_start: 128
+origin_stop: 1088
+origin_stride: 32
+test_origin_start: 544
+horizons: [1, 8, 32]
+reader_draws: [51011, 51017, 51023]
+observer_seed: 81231
+image_projection_seed: 81239
+ridge_penalty: 10.0
+diagnostic_origin: 768
+candidate_offsets: [0, -16, -64]
+diagnostic_draws: [83111, 83117, 83123]
+bootstrap_seed: 83149
+bootstrap_draws: 4000

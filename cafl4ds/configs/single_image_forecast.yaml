@@ -1,0 +1,16 @@
+# Dense, causal batch-one development experiment; fixed before scientific collection.
+seeds: [5003, 5009]
+history_names: [fresh_00, fresh_01, fresh_02, fresh_03, fresh_04, fresh_05]
+frames_per_period: 16
+prefix_images: 64
+ridge_penalty: 10.0
+fine_tune_steps: 20
+full_fine_tune_every: 32
+probe_draw: 51011
+observer_seed: 81231
+image_projection_seed: 81239
+bootstrap_seed: 81257
+bootstrap_draws: 2000
+ssl_lr: 0.0001
+ssl_weight_decay: 0.05
+batch_size: 1

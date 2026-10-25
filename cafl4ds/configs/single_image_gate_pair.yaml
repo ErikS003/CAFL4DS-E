@@ -1,0 +1,7 @@
+prior: outputs/single-image-extended-gate/20261023-fresh-temporal
+history: fresh_00
+seed: 5003
+offered: 57600
+frames_per_clip: 96
+checkpoint_stride: 384
+minimum_free_gib: 2.0

@@ -1,0 +1,21 @@
+guard:
+  _target_: cafl4ds.dnd_health_stopping.HealthStop
+  threshold: 0.1
+  patience: 2
+study:
+  _target_: cafl4ds.dnd_health_transfer.HealthTransfer
+seed: 5003
+day_updates: [160, 192, 224, 160, 192, 224, 160, 192]
+night_updates: [64, 96, 64, 128, 64, 96, 96, 128]
+total_updates: 448
+activation: 132
+draws: [61001, 61007, 61013]
+output: outputs/dnd-health-transfer/20261016-development
+frames: outputs/dnd-health-transfer/20261016-frames
+intake: outputs/dnd-health-transfer/20261016-intake
+original: outputs/regime-windows/20261013-gpu
+monitor: outputs/health-calibration/20261013-gpu
+evaluation: outputs/target-precision-budget/20261015-gpu
+pool: outputs/scheduling/20261013-intake/selection.pool.json
+archive_index: outputs/temporal-bdd/20261011-intake/archive_index.json
+network_budget_gib: 6

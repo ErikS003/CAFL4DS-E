@@ -1,0 +1,8 @@
+# Task-B source for a CROSS-DATASET split (P0.3.6): CIFAR-100 as the phase-B distribution shift, while
+# task A is the ImageNet-distribution proxy (data=imagenette). Independent img_size (32, native CIFAR;
+# the ViT-B encoder upsamples to 224) so task A stays at its own faithful resolution.
+_target_: cafl4ds.data.sources.CIFAR100Source
+root: /mnt/cifar100
+split: train
+img_size: 32
+max_per_class: ${max_per_class}

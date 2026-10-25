@@ -1,0 +1,13 @@
+{
+  "output": "outputs/center-rotation-control/20261020",
+  "notebook": "notebooks/sums/50_center_rotation_control.ipynb",
+  "source": "outputs/bank-task-stability/20261020",
+  "geometry": "outputs/geometry-interpretation/20261020",
+  "transitions": 12,
+  "maps_per_transition": 1225,
+  "crossed_maps": 14700,
+  "full_crossed_maps": 108,
+  "sample_grid_blocks": 228,
+  "minimum_free_mib": 1536,
+  "max_output_mib": 256
+}

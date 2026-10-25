@@ -1,0 +1,19 @@
+monitor:
+  _target_: cafl4ds.functional_retention.FunctionalRetention
+  penalty: 1.0
+guard:
+  _target_: cafl4ds.latched_health_guard.LatchedHealthGuard
+  budget: 0.05
+  minimum_gap: 0.25
+histories: 6
+seeds: [5003, 5009, 5011]
+parents: {day_end: 128, night_end: 256, return_early: 264}
+landmarks: [0, 4, 8, 16, 32]
+fixed_cutoff: 8
+age_boundary: 200
+age_early_cutoff: 32
+age_mature_cutoff: 4
+primary_family: 12
+minimum_gain_pp: 0.25
+domain_budget_pp: 1.0
+output: outputs/fresh-functional-guard/20261014-gpu

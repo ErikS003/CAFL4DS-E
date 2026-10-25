@@ -1,0 +1,17 @@
+# The real BDD100K images + driving attributes (the deployment substrate). Point `bdd_root` at a
+# canonical BDD100K download (100k images, not video); see docs/experiments/phase1/P1.0.2.md for
+# the expected layout and from-scratch setup.
+_target_: cafl4ds.data.attributes.BDD100KSource
+bdd_root: ${bdd_root}
+split: train
+img_size: ${img_size}
+max_images: ${max_images}
+# Drop scenes (the canary axis) with fewer than this many valid images — BDD's rare scenes (tunnel,
+# gas stations, …) cannot support a balanced held-out probe. 0 keeps every scene. Override per run,
+# e.g. `data.min_canary_count=50` keeps the well-populated scenes (city street / highway / residential).
+min_canary_count: 0
+# Optional deterministic, cell-stratified train partition. The warm and stream roles are exact
+# complements under the same fraction/seed; null preserves the historical full-source behavior.
+partition_role: null
+warm_fraction: 0.2
+partition_seed: 20260921
