@@ -30,13 +30,42 @@ COLORS = {
     "Online heuristic (B)": "#d34e2c",
     "Full training": "#458b65",
 }
-METHODS = """## Methods
+METHODS = r"""## Methods
 
 All three methods continue image-reconstruction training from the same warm parent on the same ordered image stream (seed 5003). A and B also share the augmentation and acceptance-RNG seeds. Each accepted image produces one model update.
 
 ### A: Offline heuristic
 
-A reuses N84's saved run. "Offline" means that its admission predictor was fitted beforehand and remains frozen; the image model continues learning. The predictor estimates how an update would change J: fixed-bank reconstruction relative to the warm parent, plus penalties for reduced RankMe and variance (weight 0.25 each). A lower J is preferred. Predictions below the calibrated negative threshold receive a 50% update probability; other negative predictions receive 25%, and nonnegative predictions receive 10%. Unavailable or heavily clipped predictions fall back to 25%. This preserves some learning opportunities even when predictions are unfavorable.
+A reuses N84's saved run. "Offline" means that its admission predictor was fitted beforehand and remains frozen; the image model continues learning. The predictor estimates how an update would change J: fixed-bank reconstruction relative to the inherited warm reference, plus penalties for reduced RankMe and variance (weight 0.25 each). A lower J is preferred. Predictions below the calibrated negative threshold receive a 50% update probability; other negative predictions receive 25%, and nonnegative predictions receive 10%. Unavailable or heavily clipped predictions fall back to 25%. This preserves some learning opportunities even when predictions are unfavorable.
+
+#### Mathematical definition of J
+
+The admission objective is
+
+$$
+J(\theta)=
+\frac{L_{\mathrm{bank}}(\theta)}{L_{\mathrm{ref}}}
++0.25\left[1-\frac{R(\theta)}{R_{\mathrm{ref}}}\right]_{+}
++0.25\left[1-\frac{V(\theta)}{V_{\mathrm{ref}}}\right]_{+}.
+$$
+
+Here:
+
+- $L_{\mathrm{bank}}(\theta)$ is mean reconstruction loss on the fixed reference bank.
+- $R(\theta)$ is RankMe of the bank's representations.
+- $V(\theta)$ is their representation variance.
+- $L_{\mathrm{ref}}, R_{\mathrm{ref}}, V_{\mathrm{ref}}$ are fixed normalization values inherited from the warm reference model.
+- $[x]_{+}=\max(0,x)$.
+
+Lower J is preferred. Rank and variance contribute penalties only below their reference values; exceeding a reference does not earn an additional reward. The fixed normalization values remain unchanged during the trajectory.
+
+The frozen predictor estimates the change associated with a candidate update:
+
+$$
+\Delta J=J(\theta_{\mathrm{after}})-J(\theta_{\mathrm{before}}).
+$$
+
+A negative change indicates improvement in this surrogate objective. J guides image admission; the image model's actual gradient update minimizes reconstruction loss. B's separate online predictor estimates development-task error change, as described below.
 
 Fixed-bank health is checked every 128 arrivals. The normal learning rate is one quarter of nominal; persistent loss of rank/variance, or jointly elevated covariance and reconstruction loss, switches it to one sixteenth. If fewer than eight updates occur in the preceding 256 arrivals, a short burst supplies 16 consecutive updates at the smaller rate. Development checks can refresh the backup and health reference, but task-based rollback is disabled. Numerical failures still trigger restoration and bounded recovery.
 
