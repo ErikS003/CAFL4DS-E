@@ -5,3 +5,4 @@
 - [09_health_prediction_regressions](selected/09_health_prediction_regressions.ipynb)
 - [68_single_image_filter_factorial](selected/68_single_image_filter_factorial.ipynb)
 - [91_single_image_selected_metrics](selected/91_single_image_selected_metrics.ipynb)
+- [97_single_image_online_j_forward](selected/97_single_image_online_j_forward.ipynb)

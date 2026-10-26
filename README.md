@@ -10,6 +10,7 @@ based on [aidotse/cafl4ds](https://github.com/aidotse/cafl4ds).
 - [09_health_prediction_regressions](notebooks/selected/09_health_prediction_regressions.ipynb)
 - [68_single_image_filter_factorial](notebooks/selected/68_single_image_filter_factorial.ipynb)
 - [91_single_image_selected_metrics](notebooks/selected/91_single_image_selected_metrics.ipynb)
+- [97_single_image_online_j_forward](notebooks/selected/97_single_image_online_j_forward.ipynb)
 
 The notebooks contain saved figures and can be viewed on GitHub without downloading
 the experiment data. References to older studies inside the notebooks are retained
