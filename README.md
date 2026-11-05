@@ -5,6 +5,12 @@ based on [aidotse/cafl4ds](https://github.com/aidotse/cafl4ds).
 
 ## Selected notebooks
 
+- [154_paired_mpc_plans](notebooks/selected/154_paired_mpc_plans.ipynb)
+- [153_loss_constrained_bank](notebooks/selected/153_loss_constrained_bank.ipynb)
+- [152_rolling_bank_controller](notebooks/selected/152_rolling_bank_controller.ipynb)
+- [151_replay_health_controller](notebooks/selected/151_replay_health_controller.ipynb)
+- [150_sustained_health_replay](notebooks/selected/150_sustained_health_replay.ipynb)
+- [149_health_loss_bank_objective](notebooks/selected/149_health_loss_bank_objective.ipynb)
 - [00_ssl_filter_session_findings](notebooks/selected/00_ssl_filter_session_findings.ipynb)
 - [02_health_regression_history](notebooks/selected/02_health_regression_history.ipynb)
 - [09_health_prediction_regressions](notebooks/selected/09_health_prediction_regressions.ipynb)
